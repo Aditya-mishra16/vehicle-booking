@@ -8,7 +8,7 @@ export default function HomePage() {
         </h1>
 
         <p className="text-gray-600">
-          Fast, reliable and affordable vehicle booking service
+          Fast, reliable and affordable vehicle booking service.
         </p>
 
         <button className="mt-6 bg-blue-600 text-white px-6 py-2 rounded">
