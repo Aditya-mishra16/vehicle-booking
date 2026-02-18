@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "./ThemeToggle";
 import {
   Sheet,
   SheetContent,
@@ -12,7 +13,7 @@ import {
 
 export default function Navbar() {
   return (
-    <nav className="border-b bg-white sticky top-0 z-50">
+    <nav className="border-b bg-background sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -33,6 +34,8 @@ export default function Navbar() {
             <Link href="/contact">
               <Button variant="ghost">Contact</Button>
             </Link>
+
+            <ThemeToggle />
 
             <Link href="/login">
               <Button>Login</Button>
@@ -69,6 +72,8 @@ export default function Navbar() {
                     Contact
                   </Button>
                 </Link>
+
+                <ThemeToggle />
 
                 <Link href="/login">
                   <Button className="w-full">Login</Button>

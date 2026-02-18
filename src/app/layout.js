@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Inter } from "next/font/google";
 
 const inter = Inter({
@@ -16,13 +17,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} font-sans`}>
-        <Navbar />
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} font-sans bg-background text-foreground min-h-screen`}
+      >
+        <ThemeProvider>
+          <Navbar />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {children}
-        </main>
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );
