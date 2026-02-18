@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 /* Optional reset */
-body {
-  background-color: white;
-  color: black;
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @layer base {
