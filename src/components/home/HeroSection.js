@@ -1,12 +1,307 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  MapPin,
+  Calendar,
+  Locate,
+  ArrowRight,
+  ArrowLeftRight,
+} from "lucide-react";
+import { useTripStore } from "@/store/tripStore";
+import useLocationField from "@/hooks/useLocationField";
+import axios from "axios";
+import { useState } from "react";
+import { useRef } from "react";
+
 export default function HeroSection() {
+  const router = useRouter();
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+  const { setTrip } = useTripStore();
+
+  const pickup = useLocationField();
+  const drop = useLocationField();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [tripType, setTripType] = useState("oneway");
+
+  const handleSwapLocations = () => {
+    const tempValue = pickup.value;
+    const tempCoords = pickup.coords;
+
+    pickup.setValue(drop.value);
+    pickup.setCoords(drop.coords);
+
+    drop.setValue(tempValue);
+    drop.setCoords(tempCoords);
+  };
+
+  const handleSeePrices = () => {
+    setTrip({
+      pickup: pickup.value,
+      drop: drop.value,
+      pickupCoords: pickup.coords,
+      dropCoords: drop.coords,
+      startDate: startDate,
+      endDate: endDate,
+    });
+
+    router.push("/prices");
+  };
+
+  const handleUseCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      const res = await axios.get(
+        `/api/geo?type=reverse&lat=${latitude}&lon=${longitude}`,
+      );
+
+      const label =
+        res.data.features?.[0]?.properties?.label || "Current location";
+
+      pickup.selectLocation({
+        properties: { label },
+        geometry: { coordinates: [longitude, latitude] },
+      });
+    });
+  };
+
   return (
-    <section className="py-20 text-center">
-      <h1 className="text-4xl font-bold">
-        Book Your Vehicle Easily
-      </h1>
-      <p className="mt-4">
-        Fast, reliable and affordable vehicle booking service
-      </p>
-    </section>
+    <>
+      <section
+        className="relative h-[680px] sm:h-[780px] md:h-[650px] flex items-start md:items-end pt-32 md:pt-0"
+        style={{
+          backgroundImage: "url('/images/HeroSectionBgImage.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* HERO TITLE - Desktop Only */}
+        <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center pointer-events-none">
+          <div className="text-center text-white max-w-5xl px-6">
+            <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+              Fixed fares, reliable rides, and
+              <br />a smoother way to travel between cities.
+            </h1>
+
+            <div className="flex justify-center gap-10 text-base text-gray-200 mt-6">
+              <div className="flex items-center gap-2">
+                ✓ <span>No Hidden Charges</span>
+              </div>
+              <div className="flex items-center gap-2">
+                ✓ <span>Verified Drivers</span>
+              </div>
+              <div className="flex items-center gap-2">
+                ✓ <span>Direct Human Support</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* SEARCH CARD */}
+        <div className="relative z-10 w-full max-w-md md:max-w-7xl mx-auto px-4 md:px-6">
+          <div
+            className="
+    bg-white
+    rounded-3xl
+    shadow-2xl
+    px-5 md:px-10
+    pt-16 md:pt-16
+    pb-8
+    mt-0
+    md:translate-y-1/2
+  "
+          >
+            {" "}
+            {/* Trip Type */}
+            <div className="absolute left-1/2 -top-6 -translate-x-1/2 z-20 w-full flex justify-center">
+              <div className="flex w-full max-w-xs md:w-auto bg-white border border-gray-300 rounded-full p-1 shadow-lg">
+                {["oneway", "roundtrip"].map((type) => {
+                  const isActive = tripType === type;
+
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => setTripType(type)}
+                      className={`
+              px-8 py-2 rounded-full text-base font-medium transition-all duration-300
+              ${isActive ? "bg-brandColor text-white shadow-md" : "text-black"}
+            `}
+                    >
+                      {type === "oneway" ? "One-Way" : "Round-Trip"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            {/* SINGLE ROW INPUTS */}
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Pickup */}
+              <div className="relative flex-1" ref={pickup.containerRef}>
+                <MapPin
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                  size={18}
+                />
+                <Input
+                  value={pickup.value}
+                  placeholder="Where from"
+                  onFocus={() => pickup.setFocused(true)}
+                  onChange={(e) => {
+                    pickup.setValue(e.target.value);
+                    pickup.setCoords(null);
+                  }}
+                  className="pl-12 h-14 rounded-xl"
+                />
+
+                {/* Suggestions */}
+                {pickup.focused && pickup.suggestions.length > 0 && (
+                  <div className="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-xl border max-h-60 overflow-y-auto">
+                    <div
+                      onMouseDown={handleUseCurrentLocation}
+                      className="flex items-center gap-3 p-4 border-b hover:bg-gray-100 cursor-pointer"
+                    >
+                      <Locate size={18} />
+                      <span className="text-sm font-medium">
+                        Use current location
+                      </span>
+                    </div>
+
+                    {pickup.suggestions.map((item, index) => (
+                      <div
+                        key={index}
+                        onMouseDown={() => pickup.selectLocation(item)}
+                        className="flex items-start gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                      >
+                        <MapPin size={18} className="mt-1" />
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {item.properties.name || item.properties.label}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.properties.label}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Swap */}
+              <button
+                onClick={handleSwapLocations}
+                className="
+    h-12 w-12 rounded-full border flex items-center justify-center 
+    hover:bg-gray-100 transition shrink-0
+    self-center md:self-auto
+    rotate-90 md:rotate-0
+  "
+              >
+                <ArrowLeftRight size={18} />
+              </button>
+
+              {/* Drop */}
+              <div className="relative flex-1" ref={drop.containerRef}>
+                <MapPin
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                  size={18}
+                />
+                <Input
+                  value={drop.value}
+                  placeholder="Where to"
+                  onFocus={() => drop.setFocused(true)}
+                  onChange={(e) => {
+                    drop.setValue(e.target.value);
+                    drop.setCoords(null);
+                  }}
+                  className="pl-12 h-14 rounded-xl"
+                />
+
+                {drop.focused && drop.suggestions.length > 0 && (
+                  <div className="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-xl border max-h-60 overflow-y-auto">
+                    {drop.suggestions.map((item, index) => (
+                      <div
+                        key={index}
+                        onMouseDown={() => drop.selectLocation(item)}
+                        className="flex items-start gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                      >
+                        <MapPin size={18} className="mt-1" />
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {item.properties.name || item.properties.label}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.properties.label}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Start Date */}
+              <div
+                className="relative w-full md:w-52"
+                onClick={() => startDateRef.current?.showPicker()}
+              >
+                <Calendar
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                  size={18}
+                />
+
+                <Input
+                  ref={startDateRef}
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="pl-12 h-14 rounded-xl cursor-pointer"
+                />
+              </div>
+
+              {/* End Date */}
+              <div
+                className="relative w-full md:w-52"
+                onClick={() => endDateRef.current?.showPicker()}
+              >
+                <Calendar
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                  size={18}
+                />
+
+                <Input
+                  ref={endDateRef}
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="pl-12 h-14 rounded-xl cursor-pointer"
+                />
+              </div>
+            </div>
+            {/* Button */}
+            <div className="mt-8 flex justify-center">
+              <Button
+                onClick={handleSeePrices}
+                className="
+      bg-black hover:bg-gray-900 text-white
+      w-full md:w-auto
+      px-14 py-4
+      rounded-xl text-lg
+      flex items-center justify-center gap-3
+    "
+              >
+                See Prices <ArrowRight size={18} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className="hidden md:block h-48" />
+    </>
   );
 }

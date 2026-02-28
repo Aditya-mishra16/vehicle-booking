@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
     message: "",
   });
 
@@ -24,77 +22,105 @@ export default function ContactForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("Form submitted:", formData);
-
-    // later connect API here
+    console.log("Submitted:", formData);
   };
 
   return (
-    <Card className="max-w-md mx-auto shadow-lg">
-      <CardHeader>
-        <CardTitle>Contact Us</CardTitle>
-      </CardHeader>
+    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+      {/* Name */}
+      <div className="flex flex-col gap-2 md:gap-3">
+        <Label className="text-sm md:text-base font-semibold text-black">
+          Name
+        </Label>
+        <Input
+          name="name"
+          placeholder="Enter your name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className="
+            h-12 md:h-14
+            bg-white
+            border-0
+            rounded-xl
+            px-5
+            text-base
+            placeholder:text-gray-500
+            focus-visible:ring-0
+            focus-visible:ring-offset-0
+          "
+        />
+      </div>
 
-      <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Email */}
+      <div className="flex flex-col gap-2 md:gap-3">
+        <Label className="text-sm md:text-base font-semibold text-black">
+          Email
+        </Label>
+        <Input
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="
+            h-12 md:h-14
+            bg-white
+            border-0
+            rounded-xl
+            px-5
+            text-base
+            placeholder:text-gray-500
+            focus-visible:ring-0
+            focus-visible:ring-offset-0
+          "
+        />
+      </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      {/* Message */}
+      <div className="flex flex-col gap-2 md:gap-3">
+        <Label className="text-sm md:text-base font-semibold text-black">
+          Your message
+        </Label>
+        <Textarea
+          name="message"
+          placeholder="Enter your message..."
+          rows={5}
+          value={formData.message}
+          onChange={handleChange}
+          required
+          className="
+            bg-white
+            border-0
+            rounded-xl
+            px-5
+            py-3 md:py-4
+            text-base
+            placeholder:text-gray-500
+            resize-none
+            focus-visible:ring-0
+            focus-visible:ring-offset-0
+          "
+        />
+      </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="Enter your phone number"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="message">Message</Label>
-            <Textarea
-              id="message"
-              name="message"
-              placeholder="Enter your message"
-              value={formData.message}
-              onChange={handleChange}
-              rows={4}
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full">
-            Submit Message
-          </Button>
-
-        </form>
-      </CardContent>
-    </Card>
+      {/* Submit */}
+      <Button
+        type="submit"
+        className="
+          w-full
+          h-12 md:h-14
+          bg-black
+          hover:bg-gray-900
+          text-white
+          rounded-xl
+          text-base
+          font-medium
+        "
+      >
+        Submit →
+      </Button>
+    </form>
   );
 }

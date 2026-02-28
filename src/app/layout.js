@@ -1,7 +1,13 @@
+"use client";
+
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import "leaflet/dist/leaflet.css";
+import "react-day-picker/dist/style.css";
+
 import { Inter } from "next/font/google";
+import { usePathname } from "next/navigation";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,25 +15,21 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export const metadata = {
-  title: "Vehicle Booking",
-  description: "Book vehicles easily",
-  viewport: "width=device-width, initial-scale=1",
-};
-
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
         className={`${inter.variable} font-sans bg-background text-foreground min-h-screen`}
       >
-        <ThemeProvider>
-          <Navbar />
+        <Navbar />
 
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {children}
-          </main>
-        </ThemeProvider>
+        {/* Automatically add spacing only for non-home pages */}
+        <main className={!isHome ? "pt-16" : ""}>{children}</main>
+
+        <Footer />
       </body>
     </html>
   );
