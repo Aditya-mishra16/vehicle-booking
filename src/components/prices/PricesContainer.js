@@ -23,6 +23,7 @@ export default function PricesContainer() {
     trip?.startDate || trip?.date || "",
   );
   const [endDate, setEndDate] = useState(trip?.endDate || "");
+  const [tripType, setTripType] = useState(trip?.tripType || "oneway");
 
   const [route, setRoute] = useState([]);
   const [markers, setMarkers] = useState([]);
@@ -100,6 +101,8 @@ export default function PricesContainer() {
               endDate={endDate}
               setStartDate={setStartDate}
               setEndDate={setEndDate}
+              tripType={tripType}
+              setTripType={setTripType}
               setPickup={setPickup}
               setDrop={setDrop}
               setPickupCoords={setPickupCoords}
@@ -112,8 +115,18 @@ export default function PricesContainer() {
         <RouteMapSection route={route} markers={markers} />
       </div>
 
-      <RouteStatsSection duration={duration} distance={distance} />
-      <VehicleSection distance={distance} loading={loading} />
+      <RouteStatsSection
+        duration={duration}
+        distance={distance}
+        startDate={startDate}
+        endDate={endDate}
+      />
+      <VehicleSection
+        distance={distance}
+        loading={loading}
+        startDate={startDate}
+        endDate={endDate}
+      />
       <BenefitsSection />
       <FAQSection />
       <PopularRoutesSection />

@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/sheet";
 
 export default function Navbar() {
+  const PHONE_NUMBER = process.env.NEXT_PUBLIC_PHONE_NUMBER;
+  const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -42,16 +45,19 @@ export default function Navbar() {
     { label: "Contact", href: "/contact" },
   ];
 
+  const whatsappLink = WHATSAPP_NUMBER
+    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+        "Hi, I want to enquire about an outstation trip.",
+      )}`
+    : "#";
+
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
-    backdrop-blur-sm
-    ${
-      shouldHaveWhiteBg
-        ? "bg-white/95 border-b border-gray-200 shadow-sm"
-        : "bg-transparent border-b border-transparent"
-    }
-  `}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-sm ${
+        shouldHaveWhiteBg
+          ? "bg-white/95 border-b border-gray-200 shadow-sm"
+          : "bg-transparent border-b border-transparent"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
@@ -74,14 +80,14 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition ${
+                  className={`text-sm font-medium transition-colors duration-300 ${
                     shouldHaveWhiteBg
                       ? isActive
                         ? "text-black"
-                        : "text-gray-600 hover:text-black"
+                        : "text-gray-600 hover:text-brandColor"
                       : isActive
                         ? "text-white"
-                        : "text-white/80 hover:text-white"
+                        : "text-white/80 hover:text-brandColor"
                   }`}
                 >
                   {item.label}
@@ -93,30 +99,31 @@ export default function Navbar() {
           {/* DESKTOP BUTTONS */}
           <div className="hidden md:flex items-center gap-4">
             {/* CALL BUTTON */}
-            <button
-              className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-300
-      ${
-        shouldHaveWhiteBg
-          ? "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
-          : "bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20"
-      }
-    `}
+            <a
+              href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
+              className={`h-10 w-10 flex items-center justify-center rounded-xl cursor-pointer transition-all duration-300 ${
+                shouldHaveWhiteBg
+                  ? "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  : "bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20"
+              }`}
+              aria-label="Talk to travel expert"
             >
               <Phone className="h-4 w-4" />
-            </button>
+            </a>
 
             {/* WHATSAPP BUTTON */}
-            <button
-              className={`h-10 px-6 rounded-xl text-sm font-medium transition-all duration-300
-      ${
-        shouldHaveWhiteBg
-          ? "bg-black text-white hover:bg-neutral-800"
-          : "bg-white text-black hover:bg-gray-200"
-      }
-    `}
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`h-10 px-6 rounded-xl text-sm font-medium cursor-pointer transition-all duration-300 flex items-center justify-center ${
+                shouldHaveWhiteBg
+                  ? "bg-black text-white hover:bg-neutral-800"
+                  : "bg-white text-black hover:bg-gray-200"
+              }`}
             >
-              Ask on WhatsApp
-            </button>
+              Chat on WhatsApp
+            </a>
           </div>
 
           {/* MOBILE */}
@@ -152,15 +159,25 @@ export default function Navbar() {
                     ))}
 
                     <div className="pt-6 border-t flex flex-col gap-3">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call Us
-                      </Button>
+                      <a href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start cursor-pointer"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Talk to Travel Expert
+                        </Button>
+                      </a>
 
-                      <Button className="w-full">Ask on WhatsApp</Button>
+                      <a
+                        href={whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button className="w-full cursor-pointer">
+                          Chat on WhatsApp
+                        </Button>
+                      </a>
                     </div>
                   </div>
                 </SheetContent>

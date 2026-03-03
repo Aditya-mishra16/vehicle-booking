@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { MapPin, Calendar, Clock, X } from "lucide-react";
 import useLocationField from "@/hooks/useLocationField";
 import { useEffect } from "react";
+import { useRef } from "react";
+import { useTripStore } from "@/store/tripStore";
 
 export default function PriceForm({
   pickup,
@@ -13,6 +14,8 @@ export default function PriceForm({
   endDate,
   setStartDate,
   setEndDate,
+  tripType,
+  setTripType,
   setPickup,
   setDrop,
   setPickupCoords,
@@ -20,6 +23,9 @@ export default function PriceForm({
 }) {
   const pickupField = useLocationField(pickup);
   const dropField = useLocationField(drop);
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+  const { trip, setTrip } = useTripStore();
 
   useEffect(() => {
     if (pickup) {
@@ -33,15 +39,22 @@ export default function PriceForm({
     }
   }, [drop]);
 
-  // ✅ NEW Trip Type State (UI Only)
-  const [tripType, setTripType] = useState("oneway");
+  useEffect(() => {
+    if (trip) {
+      setTrip({
+        ...trip,
+        tripType,
+      });
+    }
+  }, [tripType]);
 
   return (
     <div className="bg-white text-black rounded-3xl p-10 space-y-8 shadow-2xl w-full">
       {/* ================= HEADER TEXT ================= */}
       <div className="space-y-3">
-        <h1 className="text-3xl font-bold leading-tight">
-          Book Outstation Cabs at Affordable Fares
+        <h1 className="text-3xl md:text-4xl font-semibold leading-tight">
+          <span className="text-brandColor">Book Outstation</span> Cabs at
+          Affordable <span className="text-brandColor">Fares</span>
         </h1>
 
         <p className="text-gray-600 text-sm leading-relaxed">
@@ -60,10 +73,10 @@ export default function PriceForm({
             <button
               type="button"
               onClick={() => setTripType("oneway")}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                 tripType === "oneway"
-                  ? "bg-white shadow text-black"
-                  : "text-gray-600"
+                  ? "bg-brandColor text-white shadow-md"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               One Way
@@ -72,10 +85,10 @@ export default function PriceForm({
             <button
               type="button"
               onClick={() => setTripType("roundtrip")}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                 tripType === "roundtrip"
-                  ? "bg-white shadow text-black"
-                  : "text-gray-600"
+                  ? "bg-brandColor text-white shadow-md"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Round Trip
@@ -220,17 +233,21 @@ export default function PriceForm({
               Start Date
             </label>
 
-            <div className="relative mt-1">
+            <div
+              className="relative mt-1 cursor-pointer"
+              onClick={() => startDateRef.current?.showPicker()}
+            >
               <Calendar
-                className="absolute left-3 top-1/2 -translate-y-1/2"
+                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
                 size={18}
               />
 
               <Input
+                ref={startDateRef}
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="pl-10 h-12 rounded-xl"
+                className="pl-10 h-12 rounded-xl cursor-pointer"
               />
             </div>
           </div>
@@ -241,17 +258,21 @@ export default function PriceForm({
               End Date
             </label>
 
-            <div className="relative mt-1">
+            <div
+              className="relative mt-1 cursor-pointer"
+              onClick={() => endDateRef.current?.showPicker()}
+            >
               <Calendar
-                className="absolute left-3 top-1/2 -translate-y-1/2"
+                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
                 size={18}
               />
 
               <Input
+                ref={endDateRef}
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="pl-10 h-12 rounded-xl"
+                className="pl-10 h-12 rounded-xl cursor-pointer"
               />
             </div>
           </div>

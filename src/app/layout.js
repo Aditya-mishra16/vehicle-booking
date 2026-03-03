@@ -8,6 +8,7 @@ import { Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FloatingContactButton from "@/components/common/FloatingContactButton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         <main className={!isHome ? "pt-16" : ""}>{children}</main>
 
         <Footer />
+        <FloatingContactButton />
       </body>
     </html>
   );

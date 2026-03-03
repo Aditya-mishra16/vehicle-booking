@@ -81,6 +81,7 @@ export default function MapView({ route = [], markers = [] }) {
   return (
     <div className="relative z-0 h-full w-full">
       <MapContainer
+        key={`${center?.[0]}-${center?.[1]}`}
         center={center}
         zoom={5}
         whenCreated={(mapInstance) => {

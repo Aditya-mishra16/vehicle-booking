@@ -45,8 +45,9 @@ export default function HeroSection() {
       drop: drop.value,
       pickupCoords: pickup.coords,
       dropCoords: drop.coords,
-      startDate: startDate,
-      endDate: endDate,
+      startDate,
+      endDate,
+      tripType,
     });
 
     router.push("/prices");
@@ -80,7 +81,7 @@ export default function HeroSection() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/20" />
 
         {/* HERO TITLE - Desktop Only */}
         <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center pointer-events-none">

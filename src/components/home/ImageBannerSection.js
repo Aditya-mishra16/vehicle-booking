@@ -2,19 +2,26 @@
 
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function ImageBannerSection() {
+  const router = useRouter();
+
+  const handleNavigate = () => {
+    router.push("/prices"); // navigate to pricing page
+  };
+
   return (
     <section
       className="relative w-full py-32 text-white"
       style={{
-        backgroundImage: "url('/images/SecondaryBannerImage.png')", // <-- your PNG here
+        backgroundImage: "url('/images/SecondaryBannerImage.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/20" />
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -28,7 +35,10 @@ export default function ImageBannerSection() {
           rides without last-minute price jumps.
         </p>
 
-        <Button className="bg-brandColor hover:bg-brandColor-hover text-white px-8 py-3 rounded-xl text-base flex items-center gap-2 mx-auto">
+        <Button
+          onClick={handleNavigate}
+          className="bg-brandColor hover:bg-brandColor-hover text-white px-8 py-3 rounded-xl text-base flex items-center gap-2 mx-auto"
+        >
           Book Now <ArrowRight size={18} />
         </Button>
       </div>

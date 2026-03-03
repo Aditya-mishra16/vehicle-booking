@@ -1,35 +1,48 @@
 "use client";
 
-export default function VehicleCard({ vehicle, distance, loading }) {
-  const price =
+export default function VehicleCard({
+  vehicle,
+  distance,
+  loading,
+  driverAllowance,
+  onBook,
+}) {
+  const total =
     distance && !loading
-      ? Math.round(vehicle.baseFare + vehicle.pricePerKm * distance)
-      : "--";
+      ? Math.round(vehicle.pricePerKm * distance + driverAllowance)
+      : null;
 
   return (
-    <div className="bg-white rounded-2xl p-6 transition hover:shadow-xl cursor-pointer">
-      {/* Vehicle Image */}
-      <div className="flex justify-center mb-6">
-        <img
-          src={vehicle.image}
-          alt={vehicle.name}
-          className="h-32 object-contain"
-        />
+    <div className="bg-white rounded-2xl p-6 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between">
+      <div>
+        <div className="flex justify-center mb-6">
+          <img
+            src={vehicle.image}
+            alt={vehicle.type}
+            className="h-40 object-contain"
+          />
+        </div>
+
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold">{vehicle.type}</h3>
+
+          <span className="text-xs bg-brandColor text-white px-3 py-1 rounded-full">
+            {vehicle.seats}
+          </span>
+        </div>
+
+        <div className="text-2xl font-bold">
+          {total !== null ? `₹${total}` : "--"}
+        </div>
       </div>
 
-      {/* Title + Seat Badge */}
-      <div className="flex items-center gap-3 mb-2">
-        <h3 className="text-lg font-semibold">{vehicle.name}</h3>
-        <span className="text-xs bg-black text-white px-3 py-1 rounded-full">
-          {vehicle.seats}
-        </span>
-      </div>
-
-      {/* Description */}
-      <p className="text-gray-500 text-sm mb-4">{vehicle.description}</p>
-
-      {/* Price */}
-      <div className="text-lg font-semibold">₹{price}</div>
+      <button
+        className="mt-6 w-full bg-black text-white py-3 rounded-xl text-sm font-medium transition hover:bg-neutral-800 disabled:opacity-50"
+        disabled={!total}
+        onClick={() => onBook(vehicle, total)}
+      >
+        Book Now
+      </button>
     </div>
   );
 }
