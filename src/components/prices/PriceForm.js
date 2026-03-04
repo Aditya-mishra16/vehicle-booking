@@ -5,7 +5,6 @@ import { MapPin, Calendar, Clock, X } from "lucide-react";
 import useLocationField from "@/hooks/useLocationField";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { useTripStore } from "@/store/tripStore";
 
 export default function PriceForm({
   pickup,
@@ -25,7 +24,6 @@ export default function PriceForm({
   const dropField = useLocationField(drop);
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
-  const { trip, setTrip } = useTripStore();
 
   useEffect(() => {
     if (pickup) {
@@ -38,15 +36,6 @@ export default function PriceForm({
       dropField.setValue(drop);
     }
   }, [drop]);
-
-  useEffect(() => {
-    if (trip) {
-      setTrip({
-        ...trip,
-        tripType,
-      });
-    }
-  }, [tripType]);
 
   return (
     <div className="bg-white text-black rounded-3xl p-10 space-y-8 shadow-2xl w-full">

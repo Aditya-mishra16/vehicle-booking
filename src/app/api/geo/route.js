@@ -18,7 +18,6 @@ export async function GET(req) {
 
     return Response.json({ error: "Invalid type" }, { status: 400 });
   } catch (error) {
-    console.error("Geo API Error:", error.message);
     return Response.json({ error: "Geo error" }, { status: 500 });
   }
 }
@@ -35,7 +34,6 @@ export async function POST(req) {
 
     return Response.json({ error: "Invalid type" }, { status: 400 });
   } catch (error) {
-    console.error("Geo API Error:", error.message);
     return Response.json({ error: "Route error" }, { status: 500 });
   }
 }

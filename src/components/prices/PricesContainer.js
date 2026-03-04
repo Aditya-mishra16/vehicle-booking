@@ -25,6 +25,29 @@ export default function PricesContainer() {
   const [endDate, setEndDate] = useState(trip?.endDate || "");
   const [tripType, setTripType] = useState(trip?.tripType || "oneway");
 
+  const setTrip = useTripStore((state) => state.setTrip);
+
+  useEffect(() => {
+    setTrip({
+      pickup,
+      drop,
+      pickupCoords,
+      dropCoords,
+      startDate,
+      endDate,
+      tripType,
+    });
+  }, [
+    pickup,
+    drop,
+    pickupCoords,
+    dropCoords,
+    startDate,
+    endDate,
+    tripType,
+    setTrip,
+  ]);
+
   const [route, setRoute] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [distance, setDistance] = useState(null);
@@ -65,7 +88,6 @@ export default function PricesContainer() {
       setDistance((summary.distance / 1000).toFixed(1));
       setDuration(Math.round(summary.duration / 60));
     } catch (err) {
-      console.error("Route error:", err);
       setRoute([]);
       setMarkers([]);
       setDistance(null);
@@ -89,9 +111,9 @@ export default function PricesContainer() {
 
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-8 py-16 grid md:grid-cols-2 gap-12 items-stretch">
+      <div className="max-w-7xl mx-auto px-6 md:px-8 py-10 md:py-16 grid md:grid-cols-2 gap-12 items-start">
         {/* ================= LEFT SIDE ================= */}
-        <div className="h-[600px] flex flex-col gap-6">
+        <div className="min-h-[600px] md:h-[600px] flex flex-col gap-6">
           {/* ===== Form ===== */}
           <div className="flex-1">
             <PriceForm
@@ -112,7 +134,9 @@ export default function PricesContainer() {
         </div>
 
         {/* ================= RIGHT SIDE ================= */}
-        <RouteMapSection route={route} markers={markers} />
+        <div className="hidden md:block">
+          <RouteMapSection route={route} markers={markers} />
+        </div>
       </div>
 
       <RouteStatsSection

@@ -2,15 +2,40 @@
 
 import { useTripStore } from "@/store/tripStore";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function BookingSuccessPage() {
   const router = useRouter();
   const booking = useTripStore((state) => state.booking);
 
-  if (!booking) {
-    router.push("/");
-    return null;
-  }
+  const PHONE_NUMBER = process.env.NEXT_PUBLIC_PHONE_NUMBER;
+  const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+  useEffect(() => {
+    if (!booking) {
+      router.push("/");
+    }
+  }, [booking, router]);
+
+  if (!booking) return null;
+
+  const whatsappMessage = `
+Hi, I have successfully submitted my booking request.
+
+Booking ID: ${booking.bookingId}
+Pickup: ${booking.pickup}
+Drop: ${booking.drop}
+Vehicle: ${booking.vehicle}
+Estimated Fare: ₹${booking.price}
+
+Please assist me further.
+  `;
+
+  const whatsappLink = WHATSAPP_NUMBER
+    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+        whatsappMessage,
+      )}`
+    : "#";
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-white">
@@ -66,14 +91,34 @@ export default function BookingSuccessPage() {
         </div>
       </div>
 
-      {/* Buttons */}
-      <button className="mt-10 bg-black text-white px-8 py-3 rounded-xl hover:bg-neutral-800">
-        Chat on Whatsapp →
-      </button>
+      {/* WhatsApp Button */}
+      <a
+        href={whatsappLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="
+    mt-10
+    bg-black
+    text-white
+    px-8
+    py-3
+    rounded-xl
+    transition-colors
+    duration-300
+    hover:bg-brandColor
+    cursor-pointer
+  "
+      >
+        Chat on WhatsApp →
+      </a>
 
-      <button className="mt-4 border px-8 py-3 rounded-xl">
-        Call us on +91 92929393929
-      </button>
+      {/* Call Button */}
+      <a
+        href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
+        className="mt-4 border px-8 py-3 rounded-xl hover:bg-gray-100 transition cursor-pointer"
+      >
+        Call us on {PHONE_NUMBER}
+      </a>
     </div>
   );
 }

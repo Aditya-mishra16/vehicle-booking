@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 
 export const useTripStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       /* ---------------- TRIP STATE ---------------- */
       trip: null,
 
@@ -17,31 +17,42 @@ export const useTripStore = create(
           },
         })),
 
-      clearTrip: () =>
-        set(() => ({
-          trip: null,
-        })),
+      clearTrip: () => set({ trip: null }),
 
       /* ---------------- BOOKING STATE ---------------- */
       booking: null,
 
-      setBooking: (bookingData) =>
+      setBooking: (bookingData) => {
+        const currentTrip = get().trip;
+
         set(() => ({
           booking: {
-            ...bookingData,
+            // User details
+            name: bookingData.name,
+            email: bookingData.email,
+            phone: bookingData.phone,
+
+            // Vehicle details
+            vehicle: bookingData.vehicle,
+            price: bookingData.price,
+            bookingId: bookingData.bookingId,
+
+            // Trip details (fallback from trip state if not passed)
+            pickup: bookingData.pickup || currentTrip?.pickup || null,
+            drop: bookingData.drop || currentTrip?.drop || null,
+            startDate: bookingData.startDate || currentTrip?.startDate || null,
+
             createdAt: Date.now(),
           },
-        })),
+        }));
+      },
 
-      clearBooking: () =>
-        set(() => ({
-          booking: null,
-        })),
+      clearBooking: () => set({ booking: null }),
     }),
     {
       name: "trip-storage",
 
-      /* Persist only necessary data */
+      /* Persist only required fields */
       partialize: (state) => ({
         trip: state.trip
           ? {

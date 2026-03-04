@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingContactButton from "@/components/common/FloatingContactButton";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
 
         <Footer />
         <FloatingContactButton />
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

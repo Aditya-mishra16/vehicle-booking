@@ -5,24 +5,6 @@ import { Phone, Mail, MessageCircle } from "lucide-react";
 import ContactForm from "@/components/contact/ContactForm";
 
 export default function ContactDetails() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted:", formData);
-  };
-
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">

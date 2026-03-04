@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import VehicleCard from "./VehicleCard";
 import BookingModal from "./BookingModal";
-import { useRouter } from "next/navigation";
 import { useTripStore } from "@/store/tripStore";
 
 export default function VehicleSection({
@@ -12,10 +11,7 @@ export default function VehicleSection({
   startDate,
   endDate,
 }) {
-  const router = useRouter();
-
   const trip = useTripStore((state) => state.trip);
-  const setBooking = useTripStore((state) => state.setBooking);
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState(null);
@@ -67,27 +63,6 @@ export default function VehicleSection({
     setModalOpen(true);
   };
 
-  /* ---------- Handle Submit ---------- */
-  const handleSubmit = (customerData) => {
-    setModalOpen(false);
-
-    const bookingId = Math.floor(1000 + Math.random() * 9000);
-
-    setBooking({
-      name: customerData.name,
-      email: customerData.email,
-      phone: customerData.phone,
-      vehicle: selectedVehicle?.type,
-      price: selectedPrice,
-      pickup: trip?.pickup,
-      drop: trip?.drop,
-      startDate: startDate,
-      bookingId,
-    });
-
-    router.push("/booking-success");
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-8 py-16">
       <div className="mb-12">
@@ -112,9 +87,9 @@ export default function VehicleSection({
       <BookingModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={handleSubmit}
         vehicle={selectedVehicle}
         price={selectedPrice}
+        trip={trip}
       />
     </div>
   );
