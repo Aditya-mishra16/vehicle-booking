@@ -20,19 +20,23 @@ const inter = Inter({
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isAdminRoute = pathname.startsWith("/admin");
 
   return (
     <html lang="en">
       <body
         className={`${inter.variable} font-sans bg-background text-foreground min-h-screen`}
       >
-        <Navbar />
+        {!isAdminRoute && <Navbar />}
 
-        {/* Automatically add spacing only for non-home pages */}
-        <main className={!isHome ? "pt-16" : ""}>{children}</main>
+        <main className={!isHome && !isAdminRoute ? "pt-16" : ""}>
+          {children}
+        </main>
 
-        <Footer />
-        <FloatingContactButton />
+        {!isAdminRoute && <Footer />}
+
+        {!isAdminRoute && <FloatingContactButton />}
+
         <Toaster richColors position="top-right" />
       </body>
     </html>
