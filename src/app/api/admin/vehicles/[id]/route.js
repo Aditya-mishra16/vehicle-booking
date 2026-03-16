@@ -9,8 +9,6 @@ export async function PATCH(req, context) {
     const { id } = await context.params; // ✅ FIX
     const body = await req.json();
 
-    console.log("Updating vehicle:", id);
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return Response.json({
         success: false,
@@ -41,8 +39,6 @@ export async function PATCH(req, context) {
       vehicle: updatedVehicle,
     });
   } catch (error) {
-    console.error(error);
-
     return Response.json(
       { success: false, error: "Update failed" },
       { status: 500 },
@@ -55,8 +51,6 @@ export async function DELETE(req, context) {
     await connectDB();
 
     const { id } = await context.params; // ✅ FIX
-
-    console.log("Deleting vehicle:", id);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return Response.json({
@@ -79,8 +73,6 @@ export async function DELETE(req, context) {
       message: "Vehicle deleted",
     });
   } catch (error) {
-    console.error(error);
-
     return Response.json(
       { success: false, error: "Delete failed" },
       { status: 500 },

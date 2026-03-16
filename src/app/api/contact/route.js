@@ -51,7 +51,7 @@ export async function POST(req) {
 
     // Admin email
     await transporter.sendMail({
-      from: `"Motorium Website" <${process.env.EMAIL_USER}>`,
+      from: `"CabEazy Website" <${process.env.EMAIL_USER}>`,
       to: process.env.CONTACT_RECEIVER_EMAIL,
       replyTo: email,
       subject: `📩 New Contact Inquiry | ${name}`,
@@ -94,7 +94,7 @@ export async function POST(req) {
     </div>
 
     <div style="background:#fafafa;padding:16px;text-align:center;font-size:12px;color:#888">
-      Sent from Motorium Website Contact Form
+      Sent from CabEazy Website Contact Form
     </div>
 
   </div>
@@ -103,7 +103,7 @@ export async function POST(req) {
     });
     // Customer confirmation
     await transporter.sendMail({
-      from: `"Motorium Travel" <${process.env.EMAIL_USER}>`,
+      from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "We have received your message 🚗",
       html: `
@@ -111,7 +111,7 @@ export async function POST(req) {
   <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.08);">
 
     <div style="background:#111827;color:#fff;padding:20px 24px">
-      <h2 style="margin:0">Motorium Travel</h2>
+      <h2 style="margin:0">CabEazy Travel</h2>
     </div>
 
     <div style="padding:28px">
@@ -119,7 +119,7 @@ export async function POST(req) {
       <h3 style="margin-top:0">Hi ${name},</h3>
 
       <p style="line-height:1.6;color:#444">
-        Thank you for contacting <strong>Motorium</strong>.
+        Thank you for contacting <strong>CabEazy</strong>.
         We have successfully received your message and our team will respond shortly.
       </p>
 
@@ -140,7 +140,7 @@ export async function POST(req) {
       <hr style="margin:30px 0;border:none;border-top:1px solid #eee"/>
 
       <p style="font-size:12px;color:#999;text-align:center">
-        Motorium Travel • Safe & Reliable Outstation Cab Service
+        CabEazy Travel • Safe & Reliable Outstation Cab Service
       </p>
 
     </div>

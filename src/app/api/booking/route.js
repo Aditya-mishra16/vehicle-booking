@@ -59,7 +59,7 @@ export async function POST(req) {
 
     // Admin Email
     await transporter.sendMail({
-      from: `"Motorium Booking" <${process.env.EMAIL_USER}>`,
+      from: `"CabEazy Booking" <${process.env.EMAIL_USER}>`,
       to: process.env.CONTACT_RECEIVER_EMAIL,
       replyTo: email,
       subject: `🚗 New Booking | ${vehicleName}`,
@@ -131,7 +131,7 @@ export async function POST(req) {
 
     // Customer Email
     await transporter.sendMail({
-      from: `"Motorium Travel" <${process.env.EMAIL_USER}>`,
+      from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your booking request is received 🚗",
       html: `
@@ -139,7 +139,7 @@ export async function POST(req) {
   <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.08);">
 
     <div style="background:#111827;color:#fff;padding:20px 24px">
-      <h2 style="margin:0">Motorium Travel</h2>
+      <h2 style="margin:0">CabEazy Travel</h2>
     </div>
 
     <div style="padding:28px">
@@ -172,7 +172,7 @@ export async function POST(req) {
       <hr style="margin:30px 0;border:none;border-top:1px solid #eee"/>
 
       <p style="font-size:12px;color:#999;text-align:center">
-        Motorium Travel • Safe & Reliable Outstation Cab Service
+        CabEazy Travel • Safe & Reliable Outstation Cab Service
       </p>
 
     </div>

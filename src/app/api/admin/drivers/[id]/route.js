@@ -33,7 +33,7 @@ export async function PATCH(req, context) {
       });
 
       await transporter.sendMail({
-        from: `"Motorium Travel" <${process.env.EMAIL_USER}>`,
+        from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
         to: driver.email,
         subject: "Driver Registration Approved 🚗",
         html: `
@@ -47,7 +47,7 @@ export async function PATCH(req, context) {
           </p>
 
           <p>
-          You are now part of the <b>Motorium driver network</b>.
+          You are now part of the <b>CabEazy driver network</b>.
           </p>
 
           <p>
@@ -64,7 +64,7 @@ export async function PATCH(req, context) {
 
           <p>
           Regards<br/>
-          <b>Motorium Team</b>
+          <b>CabEazy Team</b>
           </p>
 
           </div>
@@ -78,8 +78,6 @@ export async function PATCH(req, context) {
       driver,
     });
   } catch (error) {
-    console.error(error);
-
     return Response.json(
       { success: false, error: "Failed to update driver" },
       { status: 500 },

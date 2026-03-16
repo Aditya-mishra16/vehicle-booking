@@ -38,7 +38,7 @@ export async function PATCH(req, context) {
       const formattedDate = new Date(booking.startDate).toDateString();
 
       await transporter.sendMail({
-        from: `"Motorium Travel" <${process.env.EMAIL_USER}>`,
+        from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
         to: driver.email,
         subject: "🚗 New Ride Assigned",
         html: `
@@ -69,7 +69,7 @@ export async function PATCH(req, context) {
             <hr style="margin:25px 0"/>
 
             <p style="font-size:12px;color:#777">
-              Motorium Travel • Driver Notification
+              CabEazy Travel • Driver Notification
             </p>
 
           </div>
@@ -83,8 +83,6 @@ export async function PATCH(req, context) {
       booking,
     });
   } catch (error) {
-    console.error(error);
-
     return Response.json(
       { success: false, error: "Failed to assign driver" },
       { status: 500 },

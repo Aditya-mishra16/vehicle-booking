@@ -19,8 +19,6 @@ export async function GET() {
       bookings,
     });
   } catch (error) {
-    console.error("Booking fetch error:", error);
-
     return Response.json(
       { success: false, error: "Failed to fetch bookings" },
       { status: 500 },

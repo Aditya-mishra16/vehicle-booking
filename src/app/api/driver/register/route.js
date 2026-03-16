@@ -38,7 +38,7 @@ export async function POST(req) {
 
     // Admin notification
     await transporter.sendMail({
-      from: `"Motorium Driver Registration" <${process.env.EMAIL_USER}>`,
+      from: `"CabEazy Driver Registration" <${process.env.EMAIL_USER}>`,
       to: process.env.CONTACT_RECEIVER_EMAIL,
       subject: "🚗 New Driver Registration",
       html: `
@@ -54,14 +54,14 @@ export async function POST(req) {
     // Confirmation to driver
     if (email) {
       await transporter.sendMail({
-        from: `"Motorium Travel" <${process.env.EMAIL_USER}>`,
+        from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Driver Registration Received",
         html: `
         <h2>Hello ${fullName},</h2>
 
         <p>
-        Thank you for registering as a driver with <strong>Motorium</strong>.
+        Thank you for registering as a driver with <strong>CabEazy</strong>.
         </p>
 
         <p>
@@ -77,7 +77,7 @@ export async function POST(req) {
 
         <p>
         Regards,<br/>
-        Motorium Team
+        CabEazy Team
         </p>
         `,
       });

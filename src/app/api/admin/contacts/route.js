@@ -12,8 +12,6 @@ export async function GET() {
       contacts,
     });
   } catch (error) {
-    console.error("Contacts fetch error:", error);
-
     return Response.json(
       { success: false, error: "Failed to fetch contacts" },
       { status: 500 },

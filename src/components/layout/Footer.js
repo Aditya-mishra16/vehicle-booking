@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Left */}
           <div>
             <h2 className="text-5xl md:text-[64px] font-bold leading-none text-brandColor">
-              Motorium
+              CabEazy
             </h2>
 
             <p className="text-gray-300 text-base md:text-lg mt-4 max-w-md leading-relaxed">
@@ -77,7 +77,7 @@ export default function Footer() {
 
           <div>
             <p className="text-gray-400 mb-1">Email</p>
-            <p>info@motorium.com</p>
+            <p>Cabeazy.travel@gmail.com</p>
           </div>
 
           <div>

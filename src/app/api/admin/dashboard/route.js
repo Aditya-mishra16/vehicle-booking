@@ -39,8 +39,6 @@ export async function GET() {
       recentBookings,
     });
   } catch (error) {
-    console.error("Dashboard error:", error);
-
     return Response.json(
       { success: false, error: "Failed to load dashboard data" },
       { status: 500 },

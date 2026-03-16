@@ -68,7 +68,7 @@ export default function Navbar() {
               shouldHaveWhiteBg ? "text-gray-900" : "text-white"
             }`}
           >
-            Motorium
+            CabEazy
           </Link>
 
           {/* DESKTOP MENU */}

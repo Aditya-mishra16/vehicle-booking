@@ -34,7 +34,7 @@ export default function ContactDetails() {
               <Mail className="text-brandColor" size={20} />
             </div>
             <p className="text-gray-500 text-sm">Email</p>
-            <p className="font-medium">support@nameee.com</p>
+            <p className="font-medium">Cabeazy.travel@gmail.com</p>
           </div>
 
           <div className="flex flex-col items-center gap-3">
