@@ -18,3 +18,38 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req) {
+  try {
+    await connectDB();
+
+    const body = await req.json();
+
+    const { fullName, phone, email, city, vehicle } = body;
+
+    if (!fullName || !phone || !city || !vehicle) {
+      return Response.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    const driver = await Driver.create({
+      fullName,
+      phone,
+      email,
+      city,
+      vehicle,
+    });
+
+    return Response.json({
+      success: true,
+      driver,
+    });
+  } catch {
+    return Response.json(
+      { success: false, error: "Failed to create driver" },
+      { status: 500 },
+    );
+  }
+}

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useTripStore } from "@/store/tripStore";
-import { ChevronLeft, ChevronDown } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { formatTime } from "@/utils/formatTime";
 
 export default function BookingModal({ open, onClose, vehicle, price, trip }) {
   const router = useRouter();
@@ -14,9 +15,12 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
   const pickup = trip?.pickup;
   const drop = trip?.drop;
   const startDate = trip?.startDate;
+  const startTime = trip?.startTime;
+  const endDate = trip?.endDate;
+  const endTime = trip?.endTime;
+  const tripType = trip?.tripType;
 
   const [step, setStep] = useState(1);
-  const [showBreakdown, setShowBreakdown] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [form, setForm] = useState({
@@ -48,7 +52,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -77,6 +80,10 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
           pickup,
           drop,
           startDate,
+          startTime,
+          endDate,
+          endTime,
+          tripType,
         }),
       });
 
@@ -97,6 +104,10 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
         pickup,
         drop,
         startDate,
+        startTime,
+        endDate,
+        endTime,
+        tripType,
         bookingId: data.bookingId,
       });
 
@@ -115,7 +126,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
   const handleClose = () => {
     setStep(1);
     setAcceptedTerms(false);
-    setShowBreakdown(false);
     setErrors({});
     onClose();
   };
@@ -123,7 +133,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-3xl w-full max-w-md p-8 relative shadow-2xl">
-        {/* Close */}
         <button
           className="absolute top-5 right-5 text-gray-400 hover:text-black transition"
           onClick={handleClose}
@@ -131,7 +140,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
           ✕
         </button>
 
-        {/* STEP 1 */}
         {step === 1 && (
           <>
             <h2 className="text-2xl font-semibold mb-6">
@@ -143,8 +151,7 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               <input
                 type="text"
                 placeholder="Full Name *"
-                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3
-                focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
+                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
@@ -156,8 +163,7 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               <input
                 type="email"
                 placeholder="Email Address *"
-                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3
-                focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
+                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -169,8 +175,7 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               <input
                 type="tel"
                 placeholder="Phone Number *"
-                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3
-                focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
+                className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandColor focus:border-brandColor"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
@@ -181,8 +186,7 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
             </div>
 
             <button
-              className="mt-6 w-full bg-black text-white py-3 rounded-xl font-medium
-              hover:bg-brandColor transition shadow-md hover:shadow-lg"
+              className="mt-6 w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-brandColor transition shadow-md hover:shadow-lg"
               onClick={() => {
                 if (validate()) setStep(2);
               }}
@@ -192,7 +196,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
           </>
         )}
 
-        {/* STEP 2 */}
         {step === 2 && (
           <>
             <button
@@ -208,19 +211,32 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               <span className="text-brandColor">& Confirm</span>
             </h2>
 
-            {/* Trip Summary */}
             <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-5">
               <p className="font-medium text-gray-900">
                 {pickup} → {drop}
               </p>
 
-              <p className="text-sm text-gray-600 mt-1">{vehicle?.type}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                <span className="font-medium">Vehicle:</span> {vehicle?.type}
+              </p>
 
               <p className="text-sm text-gray-500 mt-1">
+                <span className="font-medium">Pickup:</span>{" "}
                 {startDate
-                  ? new Date(startDate).toDateString()
+                  ? `${new Date(startDate).toDateString()} ${
+                      startTime ? "• " + formatTime(startTime) : ""
+                    }`
                   : "Date not available"}
               </p>
+
+              {tripType === "roundtrip" && endDate && (
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium">Return:</span>{" "}
+                  {new Date(endDate).toDateString()}{" "}
+                  {endTime ? "• " + formatTime(endTime) : ""}
+                </p>
+              )}
+
               <div className="flex justify-between items-center mt-4">
                 <span className="text-xs bg-brandColor/10 text-brandColor px-3 py-1 rounded-full">
                   Estimated Fare
@@ -232,41 +248,6 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               <p className="text-xs text-gray-500 mt-2">
                 Final fare will be confirmed by our agent.
               </p>
-
-              <button
-                onClick={() => setShowBreakdown(!showBreakdown)}
-                className="mt-3 text-sm text-brandColor flex items-center gap-1"
-              >
-                View Fare Details
-                <ChevronDown
-                  size={16}
-                  className={`transition ${showBreakdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {showBreakdown && (
-                <div className="text-xs mt-3 space-y-3">
-                  <div>
-                    <p className="font-semibold">Included</p>
-                    <ul className="list-disc ml-4">
-                      <li>Base vehicle fare</li>
-                      <li>Driver charges</li>
-                      <li>Fuel cost</li>
-                      <li>Applicable taxes</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <p className="font-semibold">Excluded</p>
-                    <ul className="list-disc ml-4">
-                      <li>Toll charges</li>
-                      <li>Parking fees</li>
-                      <li>Interstate tax</li>
-                      <li>Extra waiting charges</li>
-                    </ul>
-                  </div>
-                </div>
-              )}
             </div>
 
             <label className="flex gap-3 text-sm mb-6">
@@ -278,8 +259,9 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
               />
 
               <span>
-                I understand this is a booking request and agree to the terms.
-                Final confirmation will be provided by the company.
+                I understand that this is a <strong>booking request</strong>.
+                The company will review the details and contact me to confirm
+                the trip and final fare.
               </span>
             </label>
 

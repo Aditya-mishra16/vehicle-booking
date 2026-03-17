@@ -39,10 +39,37 @@ const BookingSchema = new mongoose.Schema(
       trim: true,
     },
 
+    /* ---------- PICKUP ---------- */
+
     startDate: {
       type: Date,
       required: true,
     },
+
+    startTime: {
+      type: String,
+      default: null,
+    },
+
+    /* ---------- RETURN (ROUND TRIP) ---------- */
+
+    endDate: {
+      type: Date,
+      default: null,
+    },
+
+    endTime: {
+      type: String,
+      default: null,
+    },
+
+    tripType: {
+      type: String,
+      enum: ["oneway", "roundtrip"],
+      default: "oneway",
+    },
+
+    /* ---------- VEHICLE ---------- */
 
     vehicle: {
       type: String,
@@ -54,7 +81,8 @@ const BookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    // ⭐ Assigned Driver
+    /* ---------- DRIVER ---------- */
+
     driver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Driver",
@@ -67,5 +95,14 @@ const BookingSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.models.Booking ||
-  mongoose.model("Booking", BookingSchema);
+/* ---------- FIX FOR NEXTJS MODEL CACHING ---------- */
+
+let Booking;
+
+if (mongoose.models.Booking) {
+  Booking = mongoose.models.Booking;
+} else {
+  Booking = mongoose.model("Booking", BookingSchema);
+}
+
+export default Booking;

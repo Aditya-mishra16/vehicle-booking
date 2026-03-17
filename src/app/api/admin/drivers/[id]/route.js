@@ -22,7 +22,6 @@ export async function PATCH(req, context) {
       });
     }
 
-    // Send email only if approved
     if (body.status === "approved" && driver.email) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -42,23 +41,15 @@ export async function PATCH(req, context) {
 
           <h2>Hello ${driver.fullName},</h2>
 
-          <p>
-          Congratulations! Your driver registration has been <b>approved</b>.
-          </p>
+          <p>Congratulations! Your driver registration has been <b>approved</b>.</p>
 
-          <p>
-          You are now part of the <b>CabEazy driver network</b>.
-          </p>
+          <p>You are now part of the <b>CabEazy driver network</b>.</p>
 
-          <p>
-          Our team will contact you whenever a ride is available in your area.
-          </p>
+          <p>Our team will contact you whenever a ride is available in your area.</p>
 
           <br/>
 
-          <p>
-          Thank you for partnering with us.
-          </p>
+          <p>Thank you for partnering with us.</p>
 
           <br/>
 
@@ -77,9 +68,35 @@ export async function PATCH(req, context) {
       success: true,
       driver,
     });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Failed to update driver" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req, context) {
+  try {
+    await connectDB();
+
+    const { id } = await context.params;
+
+    const driver = await Driver.findByIdAndDelete(id);
+
+    if (!driver) {
+      return Response.json({
+        success: false,
+        error: "Driver not found",
+      });
+    }
+
+    return Response.json({
+      success: true,
+    });
+  } catch {
+    return Response.json(
+      { success: false, error: "Failed to delete driver" },
       { status: 500 },
     );
   }

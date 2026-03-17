@@ -50,6 +50,31 @@ export default function BookingDetailsModal({ booking, isOpen, onClose }) {
           <p>
             <strong>Date:</strong> {new Date(booking.startDate).toDateString()}
           </p>
+          <p>
+            <strong>Pickup Time:</strong>{" "}
+            {booking.startTime ? booking.startTime : "-"}
+          </p>
+
+          <p>
+            <strong>Trip Type:</strong>{" "}
+            {booking.tripType === "roundtrip" ? "Round Trip" : "One Way"}
+          </p>
+
+          {booking.tripType === "roundtrip" && (
+            <>
+              <p>
+                <strong>Return Date:</strong>{" "}
+                {booking.endDate
+                  ? new Date(booking.endDate).toDateString()
+                  : "-"}
+              </p>
+
+              <p>
+                <strong>Return Time:</strong>{" "}
+                {booking.endTime ? booking.endTime : "-"}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

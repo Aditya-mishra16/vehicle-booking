@@ -1,13 +1,26 @@
 import nodemailer from "nodemailer";
 import { connectDB } from "@/lib/mongodb";
 import Booking from "@/models/Booking";
+import { formatTime } from "@/utils/formatTime";
 
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    const { name, email, phone, vehicle, price, pickup, drop, startDate } =
-      body;
+    const {
+      name,
+      email,
+      phone,
+      vehicle,
+      price,
+      pickup,
+      drop,
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+      tripType,
+    } = body;
 
     const vehicleName = typeof vehicle === "string" ? vehicle : vehicle?.type;
 
@@ -28,12 +41,25 @@ export async function POST(req) {
 
     // Generate booking ID
     const bookingId = `CAB-${Math.floor(100000 + Math.random() * 900000)}`;
-    const formattedDate = new Date(startDate).toDateString();
+
+    const formattedDate = startDate
+      ? new Date(startDate).toDateString()
+      : "Not specified";
+
+    const formattedTime = startTime ? formatTime(startTime) : "Not specified";
+
+    const formattedReturnDate =
+      tripType === "roundtrip" && endDate
+        ? new Date(endDate).toDateString()
+        : null;
+
+    const formattedReturnTime =
+      tripType === "roundtrip" ? (endTime ? formatTime(endTime) : "-") : null;
 
     // Connect to MongoDB
     await connectDB();
 
-    // Save booking to database
+    // Save booking
     await Booking.create({
       bookingId,
       name,
@@ -42,6 +68,10 @@ export async function POST(req) {
       pickup,
       drop,
       startDate,
+      startTime,
+      endDate: tripType === "roundtrip" ? endDate : null,
+      endTime: tripType === "roundtrip" ? endTime : null,
+      tripType,
       vehicle: vehicleName,
       price,
     });
@@ -57,7 +87,8 @@ export async function POST(req) {
 
     await transporter.verify();
 
-    // Admin Email
+    // ================= ADMIN EMAIL =================
+
     await transporter.sendMail({
       from: `"CabEazy Booking" <${process.env.EMAIL_USER}>`,
       to: process.env.CONTACT_RECEIVER_EMAIL,
@@ -97,6 +128,7 @@ export async function POST(req) {
       <hr style="margin:25px 0;border:none;border-top:1px solid #eee"/>
 
       <table width="100%" style="font-size:14px;border-collapse:collapse">
+
         <tr>
           <td style="padding:8px 0;color:#666"><strong>Pickup</strong></td>
           <td style="padding:8px 0">${pickup}</td>
@@ -108,9 +140,30 @@ export async function POST(req) {
         </tr>
 
         <tr>
-          <td style="padding:8px 0;color:#666"><strong>Date</strong></td>
+          <td style="padding:8px 0;color:#666"><strong>Pickup Date</strong></td>
           <td style="padding:8px 0">${formattedDate}</td>
         </tr>
+
+        <tr>
+          <td style="padding:8px 0;color:#666"><strong>Pickup Time</strong></td>
+          <td style="padding:8px 0">${formattedTime}</td>
+        </tr>
+
+        ${
+          tripType === "roundtrip"
+            ? `
+        <tr>
+          <td style="padding:8px 0;color:#666"><strong>Return Date</strong></td>
+          <td style="padding:8px 0">${formattedReturnDate}</td>
+        </tr>
+
+        <tr>
+          <td style="padding:8px 0;color:#666"><strong>Return Time</strong></td>
+          <td style="padding:8px 0">${formattedReturnTime}</td>
+        </tr>
+        `
+            : ""
+        }
 
         <tr>
           <td style="padding:8px 0;color:#666"><strong>Vehicle</strong></td>
@@ -121,6 +174,7 @@ export async function POST(req) {
           <td style="padding:8px 0;color:#666"><strong>Estimated Fare</strong></td>
           <td style="padding:8px 0;font-weight:bold">₹${price}</td>
         </tr>
+
       </table>
 
     </div>
@@ -129,7 +183,8 @@ export async function POST(req) {
 `,
     });
 
-    // Customer Email
+    // ================= CUSTOMER EMAIL =================
+
     await transporter.sendMail({
       from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -153,13 +208,22 @@ export async function POST(req) {
 
       <div style="background:#f6f7f9;border-radius:10px;padding:16px;margin-top:20px">
 
-        <p style="margin:0 0 6px"><strong>Booking ID:</strong> ${bookingId}</p>
-        <p style="margin:0 0 6px"><strong>Pickup:</strong> ${pickup}</p>
-        <p style="margin:0 0 6px"><strong>Drop:</strong> ${drop}</p>
-        <p style="margin:0 0 6px"><strong>Date:</strong> ${formattedDate}</p>
-        <p style="margin:0 0 6px"><strong>Vehicle:</strong> ${vehicleName}</p>
+        <p><strong>Booking ID:</strong> ${bookingId}</p>
+        <p><strong>Pickup:</strong> ${pickup}</p>
+        <p><strong>Drop:</strong> ${drop}</p>
+        <p><strong>Pickup Date:</strong> ${formattedDate}</p>
+        <p><strong>Pickup Time:</strong> ${formattedTime}</p>
 
-        <p style="margin:10px 0 0;font-size:16px;font-weight:bold">
+        ${
+          tripType === "roundtrip"
+            ? `<p><strong>Return Date:</strong> ${formattedReturnDate}</p>
+               <p><strong>Return Time:</strong> ${formattedReturnTime}</p>`
+            : ""
+        }
+
+        <p><strong>Vehicle:</strong> ${vehicleName}</p>
+
+        <p style="margin-top:10px;font-size:16px;font-weight:bold">
           Estimated Fare: ₹${price}
         </p>
 

@@ -3,6 +3,7 @@
 import { useTripStore } from "@/store/tripStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { formatTime } from "@/utils/formatTime";
 
 export default function BookingSuccessPage() {
   const router = useRouter();
@@ -19,17 +20,40 @@ export default function BookingSuccessPage() {
 
   if (!booking) return null;
 
+  const formattedPickupDate = booking.startDate
+    ? new Date(booking.startDate).toDateString()
+    : "";
+
+  const formattedReturnDate =
+    booking.tripType === "roundtrip" && booking.endDate
+      ? new Date(booking.endDate).toDateString()
+      : null;
+
+  const formattedPickupTime = formatTime(booking.startTime);
+  const formattedReturnTime = formatTime(booking.endTime);
+
   const whatsappMessage = `
 Hi, I have successfully submitted my booking request.
 
 Booking ID: ${booking.bookingId}
 Pickup: ${booking.pickup}
 Drop: ${booking.drop}
+
+Pickup Date: ${formattedPickupDate}
+Pickup Time: ${formattedPickupTime || "-"}
+
+${
+  booking.tripType === "roundtrip"
+    ? `Return Date: ${formattedReturnDate}
+Return Time: ${formattedReturnTime || "-"}`
+    : ""
+}
+
 Vehicle: ${booking.vehicle}
 Estimated Fare: ₹${booking.price}
 
 Please assist me further.
-  `;
+`;
 
   const whatsappLink = WHATSAPP_NUMBER
     ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -69,11 +93,30 @@ Please assist me further.
           </div>
 
           <div>
-            • Date:{" "}
-            <span className="font-medium">
-              {new Date(booking.startDate).toDateString()}
-            </span>
+            • Pickup Date:{" "}
+            <span className="font-medium">{formattedPickupDate}</span>
           </div>
+
+          <div>
+            • Pickup Time:{" "}
+            <span className="font-medium">{formattedPickupTime || "-"}</span>
+          </div>
+
+          {booking.tripType === "roundtrip" && formattedReturnDate && (
+            <>
+              <div>
+                • Return Date:{" "}
+                <span className="font-medium">{formattedReturnDate}</span>
+              </div>
+
+              <div>
+                • Return Time:{" "}
+                <span className="font-medium">
+                  {formattedReturnTime || "-"}
+                </span>
+              </div>
+            </>
+          )}
 
           <div>
             • Vehicle: <span className="font-medium">{booking.vehicle}</span>
@@ -97,17 +140,17 @@ Please assist me further.
         target="_blank"
         rel="noopener noreferrer"
         className="
-    mt-10
-    bg-black
-    text-white
-    px-8
-    py-3
-    rounded-xl
-    transition-colors
-    duration-300
-    hover:bg-brandColor
-    cursor-pointer
-  "
+        mt-10
+        bg-black
+        text-white
+        px-8
+        py-3
+        rounded-xl
+        transition-colors
+        duration-300
+        hover:bg-brandColor
+        cursor-pointer
+      "
       >
         Chat on WhatsApp →
       </a>
