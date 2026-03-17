@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-export function middleware(req) {
+export default function proxy(req) {
   const token = req.cookies.get("adminToken")?.value;
   const { pathname } = req.nextUrl;
 
-  // Allow login page if not logged in
+  // If logged in admin tries to visit login page
   if (pathname === "/admin-login") {
     if (token) {
       return NextResponse.redirect(new URL("/admin", req.url));
