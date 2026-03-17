@@ -23,6 +23,8 @@ export default function PricesContainer() {
     trip?.startDate || trip?.date || "",
   );
   const [endDate, setEndDate] = useState(trip?.endDate || "");
+  const [startTime, setStartTime] = useState(trip?.startTime || "");
+  const [endTime, setEndTime] = useState(trip?.endTime || "");
   const [tripType, setTripType] = useState(trip?.tripType || "oneway");
 
   const setTrip = useTripStore((state) => state.setTrip);
@@ -34,7 +36,9 @@ export default function PricesContainer() {
       pickupCoords,
       dropCoords,
       startDate,
+      startTime,
       endDate,
+      endTime,
       tripType,
     });
   }, [
@@ -43,7 +47,9 @@ export default function PricesContainer() {
     pickupCoords,
     dropCoords,
     startDate,
+    startTime,
     endDate,
+    endTime,
     tripType,
     setTrip,
   ]);
@@ -120,9 +126,13 @@ export default function PricesContainer() {
               pickup={pickup}
               drop={drop}
               startDate={startDate}
+              startTime={startTime}
               endDate={endDate}
+              endTime={endTime}
               setStartDate={setStartDate}
+              setStartTime={setStartTime}
               setEndDate={setEndDate}
+              setEndTime={setEndTime}
               tripType={tripType}
               setTripType={setTripType}
               setPickup={setPickup}

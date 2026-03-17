@@ -76,14 +76,21 @@
   }
 }
 
-/* Hide default browser calendar icon */
+/* Remove default browser calendar icon completely */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  right: 0;
+  display: none;
+  -webkit-appearance: none;
 }
 
-input[type="date"] {
+/* Remove default browser time picker icon completely */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+/* Remove default styling */
+input[type="date"],
+input[type="time"] {
   appearance: none;
   -webkit-appearance: none;
 }

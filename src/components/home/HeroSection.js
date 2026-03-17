@@ -9,23 +9,32 @@ import {
   Locate,
   ArrowRight,
   ArrowLeftRight,
+  Clock,
 } from "lucide-react";
 import { useTripStore } from "@/store/tripStore";
 import useLocationField from "@/hooks/useLocationField";
 import axios from "axios";
-import { useState } from "react";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 
 export default function HeroSection() {
   const router = useRouter();
+
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const endTimeRef = useRef(null);
+
   const { setTrip } = useTripStore();
 
   const pickup = useLocationField();
   const drop = useLocationField();
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
   const [tripType, setTripType] = useState("oneway");
 
   const handleSwapLocations = () => {
@@ -46,7 +55,9 @@ export default function HeroSection() {
       pickupCoords: pickup.coords,
       dropCoords: drop.coords,
       startDate,
+      startTime,
       endDate,
+      endTime,
       tripType,
     });
 
@@ -83,7 +94,7 @@ export default function HeroSection() {
       >
         <div className="absolute inset-0 bg-black/20" />
 
-        {/* HERO TITLE - Desktop Only */}
+        {/* HERO TITLE */}
         <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center pointer-events-none">
           <div className="text-center text-white max-w-5xl px-6">
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
@@ -92,36 +103,20 @@ export default function HeroSection() {
             </h1>
 
             <div className="flex justify-center gap-10 text-base text-gray-200 mt-6">
-              <div className="flex items-center gap-2">
-                ✓ <span>No Hidden Charges</span>
-              </div>
-              <div className="flex items-center gap-2">
-                ✓ <span>Verified Drivers</span>
-              </div>
-              <div className="flex items-center gap-2">
-                ✓ <span>Direct Human Support</span>
-              </div>
+              <div>✓ No Hidden Charges</div>
+              <div>✓ Verified Drivers</div>
+              <div>✓ Direct Human Support</div>
             </div>
           </div>
         </div>
+
         {/* SEARCH CARD */}
+
         <div className="relative z-10 w-full max-w-md md:max-w-7xl mx-auto px-4 md:px-6">
-          <div
-            className="
-    bg-white
-    rounded-3xl
-    shadow-2xl
-    px-5 md:px-10
-    pt-16 md:pt-16
-    pb-8
-    mt-0
-    md:translate-y-1/2
-  "
-          >
-            {" "}
+          <div className="bg-white rounded-3xl shadow-2xl px-5 md:px-10 pt-16 pb-8 md:translate-y-1/2">
             {/* Trip Type */}
             <div className="absolute left-1/2 -top-6 -translate-x-1/2 z-20 w-full flex justify-center">
-              <div className="flex w-full max-w-xs md:w-auto bg-white border border-gray-300 rounded-full p-1 shadow-lg">
+              <div className="flex w-auto bg-white border border-gray-300 rounded-full p-1 shadow-lg">
                 {["oneway", "roundtrip"].map((type) => {
                   const isActive = tripType === type;
 
@@ -129,10 +124,11 @@ export default function HeroSection() {
                     <button
                       key={type}
                       onClick={() => setTripType(type)}
-                      className={`
-              px-8 py-2 rounded-full text-base font-medium transition-all duration-300
-              ${isActive ? "bg-brandColor text-white shadow-md" : "text-black"}
-            `}
+                      className={`px-8 py-2 rounded-full text-base font-medium transition-all duration-300 ${
+                        isActive
+                          ? "bg-brandColor text-white shadow-md"
+                          : "text-black"
+                      }`}
                     >
                       {type === "oneway" ? "One-Way" : "Round-Trip"}
                     </button>
@@ -140,14 +136,22 @@ export default function HeroSection() {
                 })}
               </div>
             </div>
-            {/* SINGLE ROW INPUTS */}
+
+            {/* INPUTS */}
+
             <div className="flex flex-col md:flex-row gap-4">
               {/* Pickup */}
+
               <div className="relative flex-1" ref={pickup.containerRef}>
+                <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                  Pickup
+                </span>
+
                 <MapPin
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
                   size={18}
                 />
+
                 <Input
                   value={pickup.value}
                   placeholder="Where from"
@@ -179,10 +183,12 @@ export default function HeroSection() {
                         className="flex items-start gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b last:border-none"
                       >
                         <MapPin size={18} className="mt-1" />
+
                         <div>
                           <p className="font-semibold text-sm">
                             {item.properties.name || item.properties.label}
                           </p>
+
                           <p className="text-xs text-gray-500">
                             {item.properties.label}
                           </p>
@@ -194,24 +200,26 @@ export default function HeroSection() {
               </div>
 
               {/* Swap */}
+
               <button
                 onClick={handleSwapLocations}
-                className="
-    h-12 w-12 rounded-full border flex items-center justify-center 
-    hover:bg-gray-100 transition shrink-0
-    self-center md:self-auto
-    rotate-90 md:rotate-0
-  "
+                className="h-12 w-12 rounded-full border flex items-center justify-center self-center md:self-auto rotate-90 md:rotate-0"
               >
                 <ArrowLeftRight size={18} />
               </button>
 
               {/* Drop */}
+
               <div className="relative flex-1" ref={drop.containerRef}>
+                <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                  Drop
+                </span>
+
                 <MapPin
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
                   size={18}
                 />
+
                 <Input
                   value={drop.value}
                   placeholder="Where to"
@@ -232,10 +240,12 @@ export default function HeroSection() {
                         className="flex items-start gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b last:border-none"
                       >
                         <MapPin size={18} className="mt-1" />
+
                         <div>
                           <p className="font-semibold text-sm">
                             {item.properties.name || item.properties.label}
                           </p>
+
                           <p className="text-xs text-gray-500">
                             {item.properties.label}
                           </p>
@@ -246,55 +256,111 @@ export default function HeroSection() {
                 )}
               </div>
 
-              {/* Start Date */}
-              <div
-                className="relative w-full md:w-52"
-                onClick={() => startDateRef.current?.showPicker()}
-              >
-                <Calendar
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                  size={18}
-                />
+              {/* Pickup Date + Time */}
 
-                <Input
-                  ref={startDateRef}
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="pl-12 h-14 rounded-xl cursor-pointer"
-                />
+              <div className="flex gap-3 w-full md:w-auto">
+                <div
+                  className="relative w-full md:w-52"
+                  onClick={() => startDateRef.current?.showPicker()}
+                >
+                  <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                    Pickup Date
+                  </span>
+
+                  <Calendar
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                    size={18}
+                  />
+
+                  <Input
+                    ref={startDateRef}
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="pl-12 h-14 rounded-xl cursor-pointer"
+                  />
+                </div>
+
+                <div
+                  className="relative w-full md:w-40"
+                  onClick={() => startTimeRef.current?.showPicker()}
+                >
+                  <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                    Pickup Time
+                  </span>
+
+                  <Clock
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                    size={18}
+                  />
+
+                  <Input
+                    ref={startTimeRef}
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="pl-12 h-14 rounded-xl cursor-pointer"
+                  />
+                </div>
               </div>
 
-              {/* End Date */}
-              <div
-                className="relative w-full md:w-52"
-                onClick={() => endDateRef.current?.showPicker()}
-              >
-                <Calendar
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                  size={18}
-                />
+              {/* Round Trip */}
 
-                <Input
-                  ref={endDateRef}
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="pl-12 h-14 rounded-xl cursor-pointer"
-                />
-              </div>
+              {tripType === "roundtrip" && (
+                <div className="flex gap-3 w-full md:w-auto">
+                  <div
+                    className="relative w-full md:w-52"
+                    onClick={() => endDateRef.current?.showPicker()}
+                  >
+                    <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                      Return Date
+                    </span>
+
+                    <Calendar
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                      size={18}
+                    />
+
+                    <Input
+                      ref={endDateRef}
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="pl-12 h-14 rounded-xl cursor-pointer"
+                    />
+                  </div>
+
+                  <div
+                    className="relative w-full md:w-40"
+                    onClick={() => endTimeRef.current?.showPicker()}
+                  >
+                    <span className="absolute -top-2 left-4 bg-white px-1 text-xs text-gray-500">
+                      Return Time
+                    </span>
+
+                    <Clock
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                      size={18}
+                    />
+
+                    <Input
+                      ref={endTimeRef}
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="pl-12 h-14 rounded-xl cursor-pointer"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
+
             {/* Button */}
+
             <div className="mt-8 flex justify-center">
               <Button
                 onClick={handleSeePrices}
-                className="
-      bg-black hover:bg-gray-900 text-white
-      w-full md:w-auto
-      px-14 py-4
-      rounded-xl text-lg
-      flex items-center justify-center gap-3
-    "
+                className="bg-black hover:bg-gray-900 text-white px-14 py-4 rounded-xl text-lg flex items-center gap-3"
               >
                 See Prices <ArrowRight size={18} />
               </Button>
@@ -302,6 +368,7 @@ export default function HeroSection() {
           </div>
         </div>
       </section>
+
       <div className="hidden md:block h-48" />
     </>
   );

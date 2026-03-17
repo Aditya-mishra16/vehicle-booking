@@ -40,7 +40,14 @@ export const useTripStore = create(
             // Trip details (fallback from trip state if not passed)
             pickup: bookingData.pickup || currentTrip?.pickup || null,
             drop: bookingData.drop || currentTrip?.drop || null,
+
             startDate: bookingData.startDate || currentTrip?.startDate || null,
+            startTime: bookingData.startTime || currentTrip?.startTime || null,
+
+            endDate: bookingData.endDate || currentTrip?.endDate || null,
+            endTime: bookingData.endTime || currentTrip?.endTime || null,
+
+            tripType: bookingData.tripType || currentTrip?.tripType || null,
 
             createdAt: Date.now(),
           },
@@ -60,8 +67,13 @@ export const useTripStore = create(
               drop: state.trip.drop,
               pickupCoords: state.trip.pickupCoords,
               dropCoords: state.trip.dropCoords,
+
               startDate: state.trip.startDate,
+              startTime: state.trip.startTime,
+
               endDate: state.trip.endDate,
+              endTime: state.trip.endTime,
+
               tripType: state.trip.tripType,
               updatedAt: state.trip.updatedAt,
             }
@@ -72,11 +84,21 @@ export const useTripStore = create(
               name: state.booking.name,
               email: state.booking.email,
               phone: state.booking.phone,
+
               vehicle: state.booking.vehicle,
               price: state.booking.price,
+
               pickup: state.booking.pickup,
               drop: state.booking.drop,
+
               startDate: state.booking.startDate,
+              startTime: state.booking.startTime,
+
+              endDate: state.booking.endDate,
+              endTime: state.booking.endTime,
+
+              tripType: state.booking.tripType,
+
               bookingId: state.booking.bookingId,
               createdAt: state.booking.createdAt,
             }
