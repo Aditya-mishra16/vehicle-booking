@@ -18,7 +18,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-white border-r flex flex-col p-6">
       <h2 className="text-2xl font-semibold text-brandColor mb-10">
-        Admin Panel
+        CabEazy Admin
       </h2>
 
       <nav className="flex flex-col gap-2">

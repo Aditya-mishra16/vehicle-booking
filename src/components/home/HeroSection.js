@@ -61,7 +61,7 @@ export default function HeroSection() {
       tripType,
     });
 
-    router.push("/prices");
+    router.push("/book-cab");
   };
 
   const handleUseCurrentLocation = () => {

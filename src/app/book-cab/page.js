@@ -2,7 +2,7 @@
 
 import PricesContainer from "@/components/prices/PricesContainer";
 
-export default function PricesPage() {
+export default function BookCabPage() {
   return (
     <div>
       <PricesContainer />

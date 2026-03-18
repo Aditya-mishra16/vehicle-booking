@@ -8,7 +8,7 @@ export default function ImageBannerSection() {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.push("/prices"); // navigate to pricing page
+    router.push("/book-cab"); // navigate to pricing page
   };
 
   return (
