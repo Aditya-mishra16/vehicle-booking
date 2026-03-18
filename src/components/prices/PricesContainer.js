@@ -6,14 +6,13 @@ import { useTripStore } from "@/store/tripStore";
 import PriceForm from "./PriceForm";
 import VehicleSection from "./VehicleSection";
 import RouteMapSection from "./RouteMapSection";
-
-import RouteStatsSection from "./RouteStatsSection";
-import BenefitsSection from "./BenefitsSection";
-import FAQSection from "./FAQSection";
-import PopularRoutesSection from "./PopularRoutesSection";
+import BookingStepper from "./BookingStepper";
 
 export default function PricesContainer() {
   const trip = useTripStore((state) => state.trip);
+
+  const [step, setStep] = useState(1);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
 
   const [pickup, setPickup] = useState(trip?.pickup || "");
   const [drop, setDrop] = useState(trip?.drop || "");
@@ -57,20 +56,10 @@ export default function PricesContainer() {
   const [route, setRoute] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [distance, setDistance] = useState(null);
-  const [duration, setDuration] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const calculateRoute = useCallback(async () => {
-    if (
-      !pickupCoords ||
-      !dropCoords ||
-      !Array.isArray(pickupCoords) ||
-      !Array.isArray(dropCoords) ||
-      pickupCoords.length !== 2 ||
-      dropCoords.length !== 2
-    ) {
-      return;
-    }
+    if (!pickupCoords || !dropCoords) return;
 
     try {
       setLoading(true);
@@ -92,12 +81,10 @@ export default function PricesContainer() {
       setRoute(routePoints);
       setMarkers([routePoints[0], routePoints.at(-1)]);
       setDistance((summary.distance / 1000).toFixed(1));
-      setDuration(Math.round(summary.duration / 60));
-    } catch (err) {
+    } catch {
       setRoute([]);
       setMarkers([]);
       setDistance(null);
-      setDuration(null);
     } finally {
       setLoading(false);
     }
@@ -107,63 +94,77 @@ export default function PricesContainer() {
     calculateRoute();
   }, [calculateRoute]);
 
-  if (!trip) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        No trip selected
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-10 md:py-16 grid md:grid-cols-2 gap-12 items-start">
-        {/* ================= LEFT SIDE ================= */}
-        <div className="min-h-[600px] md:h-[600px] flex flex-col gap-6">
-          {/* ===== Form ===== */}
-          <div className="flex-1">
-            <PriceForm
-              pickup={pickup}
-              drop={drop}
-              startDate={startDate}
-              startTime={startTime}
-              endDate={endDate}
-              endTime={endTime}
-              setStartDate={setStartDate}
-              setStartTime={setStartTime}
-              setEndDate={setEndDate}
-              setEndTime={setEndTime}
-              tripType={tripType}
-              setTripType={setTripType}
-              setPickup={setPickup}
-              setDrop={setDrop}
-              setPickupCoords={setPickupCoords}
-              setDropCoords={setDropCoords}
-            />
-          </div>
+    <div className="bg-gray-50 min-h-screen">
+      {/* Mobile Layout */}
+      <div className="block md:hidden px-4 pt-6 space-y-6">
+        <BookingStepper
+          step={step}
+          setStep={setStep}
+          selectedVehicle={selectedVehicle}
+        />
+
+        <VehicleSection
+          distance={distance}
+          loading={loading}
+          startDate={startDate}
+          endDate={endDate}
+          step={step}
+          setStep={setStep}
+          selectedVehicle={selectedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+        />
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:grid max-w-7xl mx-auto grid-cols-12 gap-8 items-start pt-14">
+        {/* Price Form */}
+        <div className="col-span-3">
+          <PriceForm
+            pickup={pickup}
+            drop={drop}
+            startDate={startDate}
+            startTime={startTime}
+            endDate={endDate}
+            endTime={endTime}
+            setStartDate={setStartDate}
+            setStartTime={setStartTime}
+            setEndDate={setEndDate}
+            setEndTime={setEndTime}
+            tripType={tripType}
+            setTripType={setTripType}
+            setPickup={setPickup}
+            setDrop={setDrop}
+            setPickupCoords={setPickupCoords}
+            setDropCoords={setDropCoords}
+          />
         </div>
 
-        {/* ================= RIGHT SIDE ================= */}
-        <div className="hidden md:block">
+        {/* Vehicle Section */}
+        <div className="col-span-5 space-y-6">
+          <BookingStepper
+            step={step}
+            setStep={setStep}
+            selectedVehicle={selectedVehicle}
+          />
+
+          <VehicleSection
+            distance={distance}
+            loading={loading}
+            startDate={startDate}
+            endDate={endDate}
+            step={step}
+            setStep={setStep}
+            selectedVehicle={selectedVehicle}
+            setSelectedVehicle={setSelectedVehicle}
+          />
+        </div>
+
+        {/* Map */}
+        <div className="col-span-4">
           <RouteMapSection route={route} markers={markers} />
         </div>
       </div>
-
-      <RouteStatsSection
-        duration={duration}
-        distance={distance}
-        startDate={startDate}
-        endDate={endDate}
-      />
-      <VehicleSection
-        distance={distance}
-        loading={loading}
-        startDate={startDate}
-        endDate={endDate}
-      />
-      <BenefitsSection />
-      <FAQSection />
-      <PopularRoutesSection />
     </div>
   );
 }

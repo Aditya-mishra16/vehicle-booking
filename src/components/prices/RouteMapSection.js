@@ -8,7 +8,7 @@ const MapView = dynamic(() => import("../common/MapView"), {
 
 export default function RouteMapSection({ route, markers }) {
   return (
-    <div className="rounded-3xl overflow-hidden shadow-lg border h-[650px]">
+    <div className="rounded-3xl overflow-hidden shadow-lg border h-[640px]">
       <MapView route={route} markers={markers} />
     </div>
   );

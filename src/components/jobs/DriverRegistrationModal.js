@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 export default function DriverRegistrationModal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,19 @@ export default function DriverRegistrationModal({ isOpen, onClose }) {
     vehicle: "",
   });
 
+  /* Lock page scroll when modal opens */
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -25,7 +39,6 @@ export default function DriverRegistrationModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
 
     const loadingToast = toast.loading("Submitting registration...");
@@ -70,14 +83,20 @@ export default function DriverRegistrationModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={!loading ? onClose : undefined}
-      />
+      {/* Overlay (no close on click) */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Modal */}
       <div className="relative bg-white w-full max-w-[650px] rounded-2xl shadow-2xl p-8 md:p-10 z-10">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          disabled={loading}
+          className="absolute top-5 right-5 text-gray-400 hover:text-black transition"
+        >
+          <X size={22} />
+        </button>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-semibold">
