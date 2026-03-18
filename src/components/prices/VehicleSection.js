@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import VehicleCard from "./VehicleCard";
 import BookingModal from "./BookingModal";
 import { useTripStore } from "@/store/tripStore";
@@ -76,8 +76,18 @@ export default function VehicleSection({
     setModalOpen(true);
   };
 
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      document.body.classList.add("has-booking-cta");
+    }
+
+    return () => {
+      document.body.classList.remove("has-booking-cta");
+    };
+  }, []);
+
   return (
-    <div className="space-y-4 pb-24 md:pb-0">
+    <div className="space-y-4 pb-32 md:pb-0">
       {/* STEP 1 */}
       {step === 1 && (
         <>
@@ -96,16 +106,21 @@ export default function VehicleSection({
           </div>
 
           {/* Sticky CTA */}
-          <div className="fixed md:static bottom-4 left-4 right-4 bg-white border md:border rounded-2xl p-4 md:p-5 pb-[calc(env(safe-area-inset-bottom)+12px)] shadow-xl md:shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3 z-500">
-            <div className="text-base font-semibold text-center md:text-left">
-              {selectedPrice
-                ? `₹${selectedPrice}`
-                : "Select a vehicle to continue"}
+          <div className="fixed md:static bottom-6 left-4 right-4 bg-white border rounded-2xl p-4 shadow-xl md:shadow-sm flex items-center justify-between gap-4 z-40">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">
+                {selectedPrice ? "Estimated Fare" : ""}
+              </span>
+
+              <span className="text-lg font-semibold">
+                {selectedPrice ? `₹${selectedPrice}` : "Select vehicle"}
+              </span>
             </div>
+
             <button
               disabled={!selectedVehicle}
               onClick={handleProceed}
-              className="w-full md:w-auto bg-black text-white px-6 py-3 md:py-2.5 rounded-xl text-sm font-medium hover:bg-neutral-800 disabled:bg-gray-400"
+              className="bg-black text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-neutral-800 disabled:bg-gray-300 whitespace-nowrap"
             >
               Proceed →
             </button>
@@ -156,13 +171,15 @@ export default function VehicleSection({
           </div>
 
           {/* Sticky Book CTA */}
-          <div className="fixed md:static bottom-4 left-4 right-4 bg-white border md:border rounded-2xl p-4 md:p-5 pb-[calc(env(safe-area-inset-bottom)+12px)] shadow-xl md:shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3 z-500">
-            <div className="text-lg font-semibold text-center md:text-left">
-              ₹{selectedPrice}
+          <div className="fixed md:static bottom-6 left-4 right-4 bg-white border rounded-2xl p-4 shadow-xl md:shadow-sm flex items-center justify-between gap-4 z-40">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">Total Fare</span>
+              <span className="text-lg font-semibold">₹{selectedPrice}</span>
             </div>
+
             <button
               onClick={handleBook}
-              className="w-full md:w-auto bg-black text-white px-6 py-3 md:py-2.5 rounded-xl text-sm font-medium hover:bg-neutral-800"
+              className="bg-black text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-neutral-800 whitespace-nowrap"
             >
               Book Now →
             </button>

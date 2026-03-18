@@ -135,15 +135,13 @@ export default function BookingModal({ open, onClose, vehicle, price, trip }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      {/* Overlay */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm z-[90]"
         onClick={!loading ? handleClose : undefined}
       />
-
       {/* Modal */}
-      <div className="relative bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl">
+      <div className="relative z-[110] bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl">
         {/* Close */}
         <button
           className="absolute top-5 right-5 text-gray-400 hover:text-black"

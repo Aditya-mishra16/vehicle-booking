@@ -94,3 +94,12 @@ input[type="time"] {
   appearance: none;
   -webkit-appearance: none;
 }
+
+.floating-contact {
+  transition: bottom 0.3s ease;
+}
+
+/* when booking CTA exists */
+.has-booking-cta .floating-contact {
+  bottom: 120px;
+}

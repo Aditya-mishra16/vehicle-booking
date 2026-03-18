@@ -21,6 +21,7 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false); // NEW
 
   useEffect(() => {
     setMounted(true);
@@ -60,7 +61,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="relative flex h-16 items-center justify-between">
           {/* LOGO */}
           <Link
             href="/"
@@ -71,8 +72,8 @@ export default function Navbar() {
             CabEazy
           </Link>
 
-          {/* DESKTOP MENU */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* CENTER NAVIGATION */}
+          <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8">
             {navLinks.map((item) => {
               const isActive = pathname === item.href;
 
@@ -96,9 +97,8 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* DESKTOP BUTTONS */}
+          {/* RIGHT ACTIONS */}
           <div className="hidden md:flex items-center gap-4">
-            {/* CALL BUTTON */}
             <a
               href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
               className={`h-10 w-10 flex items-center justify-center rounded-xl cursor-pointer transition-all duration-300 ${
@@ -111,7 +111,6 @@ export default function Navbar() {
               <Phone className="h-4 w-4" />
             </a>
 
-            {/* WHATSAPP BUTTON */}
             <a
               href={whatsappLink}
               target="_blank"
@@ -126,10 +125,10 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* MOBILE */}
+          {/* MOBILE MENU */}
           <div className="md:hidden">
             {mounted && (
-              <Sheet>
+              <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
                   <Button
                     variant="ghost"
@@ -148,18 +147,30 @@ export default function Navbar() {
                   <SheetTitle>Menu</SheetTitle>
 
                   <div className="mt-6 flex flex-col gap-4">
-                    {navLinks.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="text-base font-medium text-gray-700 hover:text-black"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                    {navLinks.map((item) => {
+                      const isActive = pathname === item.href;
+
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpen(false)} // NEW
+                          className={`text-base font-medium px-2 py-1 rounded transition ${
+                            isActive
+                              ? "text-brandColor font-semibold"
+                              : "text-gray-700 hover:text-black"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      );
+                    })}
 
                     <div className="pt-6 border-t flex flex-col gap-3">
-                      <a href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}>
+                      <a
+                        href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
+                        onClick={() => setOpen(false)}
+                      >
                         <Button
                           variant="outline"
                           className="w-full justify-start cursor-pointer"
@@ -173,6 +184,7 @@ export default function Navbar() {
                         href={whatsappLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => setOpen(false)}
                       >
                         <Button className="w-full cursor-pointer">
                           Chat on WhatsApp

@@ -17,39 +17,46 @@ export default function VehicleCard({
     <div
       onClick={() => total && onSelect(vehicle, total)}
       className={`
-        flex items-center justify-between
+        flex items-center gap-4
         border rounded-2xl
-        p-5
+        p-4 md:p-5
         bg-white
-        transition
+        transition-all duration-200
         cursor-pointer
         hover:shadow-md
-        ${selected ? "border-brandColor bg-orange-50" : ""}
+        active:scale-[0.99]
+        ${selected ? "border-brandColor bg-orange-50 shadow-sm" : "border-gray-200"}
       `}
     >
-      {/* LEFT */}
-      <div className="flex items-center gap-5">
-        <img
-          src={vehicle.image}
-          alt={vehicle.type}
-          className="w-24 h-16 object-contain"
-        />
+      {/* IMAGE */}
+      <img
+        src={vehicle.image}
+        alt={vehicle.type}
+        className="
+          w-20 h-14
+          md:w-24 md:h-16
+          object-contain
+          flex-shrink-0
+        "
+      />
 
-        <div>
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold">{vehicle.type}</h3>
+      {/* INFO */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="text-base md:text-lg font-semibold text-gray-900 leading-tight">
+            {vehicle.type}
+          </h3>
 
-            <span className="text-sm flex items-center gap-1 text-gray-700">
-              👤 {vehicle.seats}
-            </span>
-          </div>
-
-          <p className="text-sm text-gray-500 mt-1">{vehicle.models}</p>
+          <span className="text-sm flex items-center gap-1 text-gray-600 whitespace-nowrap">
+            👤 {vehicle.seats}
+          </span>
         </div>
+
+        <p className="text-sm text-gray-500 truncate">{vehicle.models}</p>
       </div>
 
       {/* PRICE */}
-      <div className="text-xl font-semibold">
+      <div className="text-lg md:text-xl font-semibold text-gray-900 flex-shrink-0 whitespace-nowrap">
         {total !== null ? `₹${total}` : "--"}
       </div>
     </div>

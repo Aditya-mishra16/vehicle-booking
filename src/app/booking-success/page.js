@@ -62,55 +62,66 @@ Please assist me further.
     : "#";
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-white">
-      {/* Check Icon */}
-      <div className="w-20 h-20 rounded-full bg-brandColor text-white flex items-center justify-center text-3xl mb-6">
+    <div className="min-h-screen bg-white flex flex-col items-center px-4 sm:px-6 pt-12 pb-16 text-center">
+      {/* Success Icon */}
+      <div className="w-20 h-20 rounded-full bg-brandColor text-white flex items-center justify-center text-3xl shadow-lg mb-6">
         ✓
       </div>
 
       {/* Heading */}
-      <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold max-w-xl leading-tight">
         Your Booking Has Been{" "}
         <span className="text-brandColor">Successfully Received!</span>
       </h1>
 
-      <p className="text-gray-600 mt-4 max-w-2xl">
-        Our team has received your booking and will contact you shortly to
-        confirm the details and finalize your ride.
+      {/* Subtitle */}
+      <p className="text-gray-600 mt-4 max-w-xl text-sm sm:text-base leading-relaxed">
+        Our team has received your booking request and will contact you shortly
+        to confirm the trip and finalize your ride details.
       </p>
 
-      {/* Summary Card */}
-      <div className="mt-12 border rounded-2xl p-8 max-w-3xl w-full text-left">
-        <h2 className="text-xl font-semibold mb-6">Booking Summary</h2>
+      {/* Trip Details Card */}
+      <div className="mt-10 w-full max-w-2xl bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8 text-left shadow-sm">
+        <h2 className="text-lg sm:text-xl font-semibold mb-6">Trip Details</h2>
 
-        <div className="grid md:grid-cols-2 gap-6 text-gray-700">
-          <div>
-            • Pickup: <span className="font-medium">{booking.pickup}</span>
+        <div className="space-y-5 text-sm sm:text-base">
+          {/* Booking ID Row */}
+          <div className="flex justify-between items-center pb-4 border-b">
+            <span className="text-gray-500">Booking ID</span>
+            <span className="font-semibold tracking-wide text-brandColor">
+              {booking.bookingId}
+            </span>
           </div>
 
-          <div>
-            • Drop: <span className="font-medium">{booking.drop}</span>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Pickup</span>
+            <span className="font-medium">{booking.pickup}</span>
           </div>
 
-          <div>
-            • Pickup Date:{" "}
+          <div className="flex justify-between">
+            <span className="text-gray-500">Drop</span>
+            <span className="font-medium">{booking.drop}</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Pickup Date</span>
             <span className="font-medium">{formattedPickupDate}</span>
           </div>
 
-          <div>
-            • Pickup Time:{" "}
+          <div className="flex justify-between">
+            <span className="text-gray-500">Pickup Time</span>
             <span className="font-medium">{formattedPickupTime || "-"}</span>
           </div>
 
           {booking.tripType === "roundtrip" && formattedReturnDate && (
             <>
-              <div>
-                • Return Date:{" "}
+              <div className="flex justify-between">
+                <span className="text-gray-500">Return Date</span>
                 <span className="font-medium">{formattedReturnDate}</span>
               </div>
 
-              <div>
-                • Return Time:{" "}
+              <div className="flex justify-between">
+                <span className="text-gray-500">Return Time</span>
                 <span className="font-medium">
                   {formattedReturnTime || "-"}
                 </span>
@@ -118,50 +129,36 @@ Please assist me further.
             </>
           )}
 
-          <div>
-            • Vehicle: <span className="font-medium">{booking.vehicle}</span>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Vehicle</span>
+            <span className="font-medium">{booking.vehicle}</span>
           </div>
 
-          <div>
-            • Estimated Fare:{" "}
-            <span className="font-medium">₹{booking.price}</span>
-          </div>
-
-          <div>
-            • Booking ID:{" "}
-            <span className="font-medium">{booking.bookingId}</span>
+          <div className="flex justify-between pt-4 border-t">
+            <span className="text-gray-500">Estimated Fare</span>
+            <span className="font-semibold">₹{booking.price}</span>
           </div>
         </div>
       </div>
 
-      {/* WhatsApp Button */}
-      <a
-        href={whatsappLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="
-        mt-10
-        bg-black
-        text-white
-        px-8
-        py-3
-        rounded-xl
-        transition-colors
-        duration-300
-        hover:bg-brandColor
-        cursor-pointer
-      "
-      >
-        Chat on WhatsApp →
-      </a>
+      {/* Actions */}
+      <div className="mt-10 w-full max-w-md flex flex-col gap-4">
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full bg-black text-white py-3 rounded-xl font-medium transition hover:bg-brandColor"
+        >
+          Chat on WhatsApp →
+        </a>
 
-      {/* Call Button */}
-      <a
-        href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
-        className="mt-4 border px-8 py-3 rounded-xl hover:bg-gray-100 transition cursor-pointer"
-      >
-        Call us on {PHONE_NUMBER}
-      </a>
+        <a
+          href={PHONE_NUMBER ? `tel:${PHONE_NUMBER}` : "#"}
+          className="w-full border py-3 rounded-xl hover:bg-gray-100 transition"
+        >
+          Call us on {PHONE_NUMBER}
+        </a>
+      </div>
     </div>
   );
 }

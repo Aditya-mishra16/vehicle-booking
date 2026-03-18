@@ -27,7 +27,7 @@ export default function ServiceDetails() {
         <div className="text-center mb-14 md:mb-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight">
             <span className="text-brandColor">Smart, Affordable,</span> and{" "}
-            <span className="text-brandColor">Reliable</span>
+            <span className="text-brandColor">Reliable</span>{" "}
             <br className="hidden md:block" />
             Road Travel Services
           </h2>

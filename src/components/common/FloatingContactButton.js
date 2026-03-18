@@ -25,7 +25,7 @@ export default function FloatingContactButton() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 flex flex-col items-end gap-4">
+    <div className="floating-contact fixed right-6 bottom-6 z-50 flex flex-col items-end gap-4">
       {/* Open State Buttons */}
       <div
         className={`flex flex-col items-end gap-3 transition-all duration-300 ease-out ${
@@ -62,7 +62,6 @@ export default function FloatingContactButton() {
           </span>
         </a>
       </div>
-
       {/* Main Floating Button */}
       <button
         onClick={() => setOpen((prev) => !prev)}
