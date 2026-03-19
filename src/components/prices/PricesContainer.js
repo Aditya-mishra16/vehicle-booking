@@ -94,6 +94,38 @@ export default function PricesContainer() {
     calculateRoute();
   }, [calculateRoute]);
 
+  useEffect(() => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (!isMobile) return;
+
+    // Steps that have bottom CTA
+    if (step === 1 || step === 2 || step === 3) {
+      document.body.classList.add("has-booking-cta");
+    } else {
+      document.body.classList.remove("has-booking-cta");
+    }
+
+    return () => {
+      document.body.classList.remove("has-booking-cta");
+    };
+  }, [step]);
+
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 768;
+
+    if (isDesktop) {
+      setStep(2);
+    }
+  }, []);
+
+  const isValid =
+    pickup &&
+    drop &&
+    startDate &&
+    startTime &&
+    (tripType !== "roundtrip" || (endDate && endTime));
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Mobile Layout */}
@@ -104,16 +136,72 @@ export default function PricesContainer() {
           selectedVehicle={selectedVehicle}
         />
 
-        <VehicleSection
-          distance={distance}
-          loading={loading}
-          startDate={startDate}
-          endDate={endDate}
-          step={step}
-          setStep={setStep}
-          selectedVehicle={selectedVehicle}
-          setSelectedVehicle={setSelectedVehicle}
-        />
+        {/* STEP 1 → PRICE FORM */}
+        {step === 1 && (
+          <>
+            <PriceForm
+              pickup={pickup}
+              drop={drop}
+              startDate={startDate}
+              startTime={startTime}
+              endDate={endDate}
+              endTime={endTime}
+              setStartDate={setStartDate}
+              setStartTime={setStartTime}
+              setEndDate={setEndDate}
+              setEndTime={setEndTime}
+              tripType={tripType}
+              setTripType={setTripType}
+              setPickup={setPickup}
+              setDrop={setDrop}
+              setPickupCoords={setPickupCoords}
+              setDropCoords={setDropCoords}
+            />
+            {/* ✅ STICKY CTA */}
+            <div className="fixed md:static bottom-6 left-4 right-4 bg-white border rounded-2xl p-4 shadow-xl md:shadow-sm flex items-center justify-between gap-3 z-40">
+              {/* LEFT CONTENT */}
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs text-gray-500">Your Ride</span>
+
+                <span className="text-sm md:text-base font-semibold text-gray-900 truncate">
+                  {pickup && drop
+                    ? `${pickup.split(",")[0]} → ${drop.split(",")[0]}`
+                    : "Enter trip details"}
+                </span>
+              </div>
+
+              {/* BUTTON */}
+              <button
+                disabled={!isValid}
+                onClick={() => {
+                  if (!isValid) return;
+                  setStep(2);
+                }}
+                className={`shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+                  isValid
+                    ? "bg-black text-white hover:bg-neutral-800"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Continue →
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* STEP 2 → VEHICLES */}
+        {(step === 2 || step === 3) && (
+          <VehicleSection
+            distance={distance}
+            loading={loading}
+            startDate={startDate}
+            endDate={endDate}
+            step={step}
+            setStep={setStep}
+            selectedVehicle={selectedVehicle}
+            setSelectedVehicle={setSelectedVehicle}
+          />
+        )}
       </div>
 
       {/* Desktop Layout */}
@@ -142,11 +230,9 @@ export default function PricesContainer() {
 
         {/* Vehicle Section */}
         <div className="col-span-5 space-y-6">
-          <BookingStepper
-            step={step}
-            setStep={setStep}
-            selectedVehicle={selectedVehicle}
-          />
+          <div className="hidden md:block">
+            <BookingStepper step={step} setStep={setStep} />
+          </div>
 
           <VehicleSection
             distance={distance}

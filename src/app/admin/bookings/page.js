@@ -28,6 +28,25 @@ export default function BookingsPage() {
     }
   };
 
+  const confirmBooking = async (id) => {
+    try {
+      const res = await fetch(`/api/admin/bookings/${id}/confirm`, {
+        method: "PATCH",
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Booking confirmed & email sent");
+        fetchBookings(); // refresh table
+      } else {
+        toast.error("Failed to confirm booking");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    }
+  };
+
   const openDetails = (booking) => {
     setSelectedBooking(booking);
     setOpenModal(true);
@@ -131,6 +150,13 @@ export default function BookingsPage() {
                       className="text-blue-600 hover:underline"
                     >
                       View
+                    </button>
+
+                    <button
+                      onClick={() => confirmBooking(booking._id)}
+                      className="text-green-600 hover:underline"
+                    >
+                      Confirm
                     </button>
 
                     <button

@@ -5,24 +5,27 @@ import { MapPin, Car, Headphones, Luggage } from "lucide-react";
 const steps = [
   {
     icon: MapPin,
-    title: "Enter Your Route",
-    description: "Add pickup and drop locations",
+    title: "Enter Trip Details",
+    description:
+      "Add pickup & drop locations, select trip type, date, and time",
   },
   {
     icon: Car,
-    title: "Check Estimated Price",
-    description: "We show estimated fare based on vehicle selection.",
+    title: "Choose Your Vehicle",
+    description: "Browse and select the vehicle that best suits your journey",
+  },
+  {
+    icon: Luggage,
+    title: "Review Fare Estimate",
+    description:
+      "View transparent pricing based on distance and vehicle selection",
     highlight: true,
   },
   {
     icon: Headphones,
-    title: "Talk to Us",
-    description: "Confirm your booking via call or WhatsApp.",
-  },
-  {
-    icon: Luggage,
-    title: "Sit Back & Travel",
-    description: "Enjoy a smooth and comfortable journey.",
+    title: "Confirm Your Booking",
+    description:
+      "Enter your details and our team will assist you with confirmation",
   },
 ];
 
@@ -51,15 +54,17 @@ export default function HowItWorksSection() {
             return (
               <div
                 key={index}
-                className="relative flex flex-col items-center text-center w-full md:w-1/4"
+                className="relative flex flex-col items-center text-center w-full md:w-1/4 transition-all duration-300 hover:-translate-y-1.5"
               >
-                {/* Icon Box — SAME SIZE AS BEFORE */}
+                {/* Icon Box */}
                 <div
-                  className={`relative z-10 w-28 h-28 rounded-2xl flex items-center justify-center shadow-md transition ${
-                    isHighlighted
-                      ? "bg-brandColor text-white scale-105"
-                      : "bg-white text-brandColor"
-                  }`}
+                  className={`relative z-10 w-28 h-28 rounded-2xl flex items-center justify-center transition-all duration-300
+                    ${
+                      isHighlighted
+                        ? "bg-brandColor text-white shadow-lg ring-4 ring-brandColor/20"
+                        : "bg-white text-brandColor border border-gray-100 shadow-sm"
+                    }
+                  `}
                 >
                   <Icon size={40} />
                 </div>
@@ -68,7 +73,9 @@ export default function HowItWorksSection() {
                 <h3 className="mt-6 text-lg font-semibold">{step.title}</h3>
 
                 {/* Description */}
-                <p className="text-gray-500 text-sm mt-2">{step.description}</p>
+                <p className="text-gray-500 text-sm mt-2 max-w-[220px] leading-relaxed">
+                  {step.description}
+                </p>
               </div>
             );
           })}

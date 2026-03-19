@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import Driver from "@/models/Driver";
-import nodemailer from "nodemailer";
+import { sendEmail } from "@/utils/email/sendEmail";
+import { emailTemplate } from "@/utils/email/template";
 
 export async function PATCH(req, context) {
   try {
@@ -22,45 +23,41 @@ export async function PATCH(req, context) {
       });
     }
 
+    /* ---------- SEND APPROVAL EMAIL ---------- */
+
     if (body.status === "approved" && driver.email) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      await transporter.sendMail({
-        from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
+      await sendEmail({
         to: driver.email,
-        subject: "Driver Registration Approved 🚗",
-        html: `
-        <div style="font-family:Arial;padding:20px;background:#f5f5f5">
-          <div style="max-width:600px;margin:auto;background:white;padding:30px;border-radius:10px">
+        subject: "🚗 Driver Registration Approved",
+        html: emailTemplate({
+          title: `Hello ${driver.fullName},`,
+          content: `
+            <p>
+              Congratulations! Your driver registration has been 
+              <strong>approved</strong>.
+            </p>
 
-          <h2>Hello ${driver.fullName},</h2>
+            <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
+              <p>
+                You are now part of the 
+                <strong>CabEazy driver network</strong>.
+              </p>
 
-          <p>Congratulations! Your driver registration has been <b>approved</b>.</p>
+              <p style="margin-top:8px;">
+                Our team will contact you whenever a ride is available 
+                in your area.
+              </p>
+            </div>
 
-          <p>You are now part of the <b>CabEazy driver network</b>.</p>
+            <div style="margin-top:20px;padding:16px;border-radius:10px;background:#fff4f0;border-left:4px solid #ea5b2a;">
+              🚗 Stay ready — ride opportunities will be shared with you soon.
+            </div>
 
-          <p>Our team will contact you whenever a ride is available in your area.</p>
-
-          <br/>
-
-          <p>Thank you for partnering with us.</p>
-
-          <br/>
-
-          <p>
-          Regards<br/>
-          <b>CabEazy Team</b>
-          </p>
-
-          </div>
-        </div>
-        `,
+            <p style="margin-top:20px;">
+              Thank you for partnering with us.
+            </p>
+          `,
+        }),
       });
     }
 

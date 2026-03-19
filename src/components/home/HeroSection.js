@@ -15,6 +15,7 @@ import { useTripStore } from "@/store/tripStore";
 import useLocationField from "@/hooks/useLocationField";
 import axios from "axios";
 import { useState, useRef } from "react";
+import { toast } from "sonner";
 
 export default function HeroSection() {
   const router = useRouter();
@@ -49,6 +50,23 @@ export default function HeroSection() {
   };
 
   const handleSeePrices = () => {
+    if (!pickup.value || !drop.value) {
+      toast.error("Please select pickup and drop locations");
+      return;
+    }
+
+    if (!startDate || !startTime) {
+      toast.error("Please select pickup date and time");
+      return;
+    }
+
+    if (tripType === "roundtrip") {
+      if (!endDate || !endTime) {
+        toast.error("Please select return date and time");
+        return;
+      }
+    }
+
     setTrip({
       pickup: pickup.value,
       drop: drop.value,

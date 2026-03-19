@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import VehicleCard from "./VehicleCard";
 import BookingModal from "./BookingModal";
 import { useTripStore } from "@/store/tripStore";
+import { toast } from "sonner";
 
 export default function VehicleSection({
   distance,
@@ -69,10 +70,50 @@ export default function VehicleSection({
 
   const handleProceed = () => {
     if (!selectedVehicle) return;
-    setStep(2);
+
+    if (!trip?.pickup || !trip?.drop) {
+      toast.error("Please select pickup and drop locations");
+      return;
+    }
+
+    if (!trip?.startDate || !trip?.startTime) {
+      toast.error("Please select pickup date and time");
+      return;
+    }
+
+    if (trip?.tripType === "roundtrip") {
+      if (!trip?.endDate || !trip?.endTime) {
+        toast.error("Please select return date and time");
+        return;
+      }
+    }
+
+    setStep(3);
   };
 
   const handleBook = () => {
+    if (!trip?.pickup || !trip?.drop) {
+      toast.error("Please select pickup and drop locations");
+      return;
+    }
+
+    if (!trip?.startDate || !trip?.startTime) {
+      toast.error("Please select pickup date and time");
+      return;
+    }
+
+    if (trip?.tripType === "roundtrip") {
+      if (!trip?.endDate || !trip?.endTime) {
+        toast.error("Please select return date and time");
+        return;
+      }
+    }
+
+    if (!selectedVehicle) {
+      toast.error("Please select a vehicle");
+      return;
+    }
+
     setModalOpen(true);
   };
 
@@ -88,24 +129,28 @@ export default function VehicleSection({
 
   return (
     <div className="space-y-4 pb-32 md:pb-0">
-      {/* STEP 1 */}
-      {step === 1 && (
-        <>
-          <div className="space-y-3">
-            {vehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                distance={distance}
-                loading={loading}
-                driverAllowance={driverAllowance}
-                onSelect={handleSelectVehicle}
-                selected={selectedVehicle?.id === vehicle.id}
-              />
-            ))}
-          </div>
+      {/* ✅ VEHICLE LIST → ALWAYS VISIBLE ON DESKTOP */}
+      <div
+        className={`${step === 2 ? "block" : "hidden"} md:block ${
+          step === 3 ? "md:hidden" : ""
+        }`}
+      >
+        <div className="space-y-3">
+          {vehicles.map((vehicle) => (
+            <VehicleCard
+              key={vehicle.id}
+              vehicle={vehicle}
+              distance={distance}
+              loading={loading}
+              driverAllowance={driverAllowance}
+              onSelect={handleSelectVehicle}
+              selected={selectedVehicle?.id === vehicle.id}
+            />
+          ))}
+        </div>
 
-          {/* Sticky CTA */}
+        {/* ✅ STEP 2 CTA (Proceed) */}
+        <div className="pt-2 md:pt-4">
           <div className="fixed md:static bottom-6 left-4 right-4 bg-white border rounded-2xl p-4 shadow-xl md:shadow-sm flex items-center justify-between gap-4 z-40">
             <div className="flex flex-col">
               <span className="text-xs text-gray-500">
@@ -125,11 +170,11 @@ export default function VehicleSection({
               Proceed →
             </button>
           </div>
-        </>
-      )}
+        </div>
+      </div>
 
-      {/* STEP 2 */}
-      {step === 2 && selectedVehicle && (
+      {/* ✅ STEP 3 → SUMMARY */}
+      {step === 3 && selectedVehicle && (
         <>
           <VehicleCard
             vehicle={selectedVehicle}
@@ -170,7 +215,7 @@ export default function VehicleSection({
             </ul>
           </div>
 
-          {/* Sticky Book CTA */}
+          {/* ✅ BOOK CTA */}
           <div className="fixed md:static bottom-6 left-4 right-4 bg-white border rounded-2xl p-4 shadow-xl md:shadow-sm flex items-center justify-between gap-4 z-40">
             <div className="flex flex-col">
               <span className="text-xs text-gray-500">Total Fare</span>

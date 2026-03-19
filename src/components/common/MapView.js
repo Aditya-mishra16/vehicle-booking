@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -11,108 +11,119 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-/* ---------- Fix Marker Icons ---------- */
+/* ---------- MARKERS ---------- */
 
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
+// 🔵 Default Leaflet blue marker (START)
+const startIcon = new L.Icon({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
 });
 
-const fallbackCenter = [20.5937, 78.9629]; // India center
+// 🔴 Red marker (END)
+const endIcon = new L.Icon({
+  iconRetinaUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
-/* ---------- Auto Fit Route ---------- */
+/* ---------- FIT BOUNDS ---------- */
 
 function FitBounds({ route }) {
   const map = useMap();
 
   useEffect(() => {
-    if (route.length > 0) {
-      const bounds = L.latLngBounds(route);
-      map.fitBounds(bounds, { padding: [50, 50] });
+    if (route?.length > 1) {
+      map.fitBounds(L.latLngBounds(route), { padding: [60, 60] });
     }
   }, [route, map]);
 
   return null;
 }
 
-/* ---------- Set View ---------- */
+/* ---------- SMOOTH ROUTE ANIMATION ---------- */
 
-function SetView({ center }) {
-  const map = useMap();
+function AnimatedRoute({ route }) {
+  const [visiblePoints, setVisiblePoints] = useState([]);
+  const frameRef = useRef();
 
   useEffect(() => {
-    if (center) {
-      map.setView(center, 13);
-    }
-  }, [center, map]);
+    if (!route || route.length < 2) return;
 
-  return null;
+    let start = null;
+    const duration = 2000;
+
+    const animate = (time) => {
+      if (!start) start = time;
+
+      const progress = Math.min((time - start) / duration, 1);
+      const count = Math.max(2, Math.floor(progress * route.length));
+
+      setVisiblePoints(route.slice(0, count));
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [route]);
+
+  return (
+    <>
+      <Polyline
+        positions={visiblePoints}
+        color="#000"
+        weight={3}
+        opacity={0.9}
+      />
+
+      <Marker position={route[0]} icon={startIcon} />
+      <Marker position={route[route.length - 1]} icon={endIcon} />
+    </>
+  );
 }
 
-export default function MapView({ route = [], markers = [] }) {
-  const [currentLocation, setCurrentLocation] = useState(null);
+/* ---------- MAIN ---------- */
 
-  /* ---------- Get User Location ---------- */
+const fallbackCenter = [20.5937, 78.9629];
+
+export default function MapView({ route = [] }) {
+  const [center, setCenter] = useState(fallbackCenter);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation([latitude, longitude]);
-      },
-      () => {
-        setCurrentLocation(fallbackCenter);
-      },
-      { enableHighAccuracy: true },
+      (pos) => setCenter([pos.coords.latitude, pos.coords.longitude]),
+      () => setCenter(fallbackCenter),
     );
   }, []);
 
-  const center = currentLocation || fallbackCenter;
-
-  /* ---------- Prevent Leaflet Container Reuse ---------- */
-
-  const mapKey = route.length
-    ? `${route[0].join("-")}-${route.at(-1).join("-")}`
-    : center.join("-");
-
   return (
-    <div className="relative z-0 h-full w-full">
+    // ✅ ONLY CHANGE HERE
+    <div className="relative z-0 h-full w-full rounded-3xl overflow-hidden">
       <MapContainer
-        key={mapKey}
         center={center}
         zoom={5}
         scrollWheelZoom
         className="h-full w-full"
+        style={{ zIndex: 0 }} // ✅ IMPORTANT FIX
       >
-        {/* Base Map */}
-        <TileLayer
-          attribution="© OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {/* Center map to user location */}
-        {currentLocation && <SetView center={currentLocation} />}
-
-        {/* User marker when no route */}
-        {!route.length && currentLocation && (
-          <Marker position={currentLocation} />
-        )}
-
-        {/* Route markers */}
-        {markers.map((pos, index) => (
-          <Marker key={index} position={pos} />
-        ))}
-
-        {/* Route line */}
-        {route.length > 0 && (
+        {route.length > 1 && (
           <>
-            <Polyline positions={route} color="black" weight={6} />
+            <AnimatedRoute route={route} />
             <FitBounds route={route} />
           </>
         )}

@@ -1,6 +1,9 @@
-import nodemailer from "nodemailer";
+"use server";
+
 import { connectDB } from "@/lib/mongodb";
 import Driver from "@/models/Driver";
+import { sendEmail } from "@/utils/email/sendEmail";
+import { emailTemplate } from "@/utils/email/template";
 
 export async function POST(req) {
   try {
@@ -17,7 +20,7 @@ export async function POST(req) {
 
     await connectDB();
 
-    // Save driver
+    // ✅ Save driver
     const driver = await Driver.create({
       fullName,
       phone,
@@ -26,60 +29,72 @@ export async function POST(req) {
       vehicle,
     });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    /* ---------- ADMIN EMAIL (BOOKING STYLE) ---------- */
 
-    await transporter.verify();
+    const adminContent = `
+      <p>A new driver has registered on CabEazy.</p>
 
-    // Admin notification
-    await transporter.sendMail({
-      from: `"CabEazy Driver Registration" <${process.env.EMAIL_USER}>`,
+      <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
+        <p><strong>Name:</strong> ${fullName}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Email:</strong> ${email || "Not provided"}</p>
+        <p><strong>City:</strong> ${city}</p>
+        <p><strong>Vehicle:</strong> ${vehicle}</p>
+      </div>
+
+      <div style="margin-top:20px;padding:16px;border-radius:10px;background:#fff4f0;border-left:4px solid #ea5b2a;">
+        🚗 <strong>Action Required:</strong> Review and approve the driver.
+      </div>
+    `;
+
+    await sendEmail({
       to: process.env.CONTACT_RECEIVER_EMAIL,
       subject: "🚗 New Driver Registration",
-      html: `
-      <h2>New Driver Registration</h2>
-      <p><strong>Name:</strong> ${fullName}</p>
-      <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Email:</strong> ${email || "Not provided"}</p>
-      <p><strong>City:</strong> ${city}</p>
-      <p><strong>Vehicle:</strong> ${vehicle}</p>
-      `,
+      html: emailTemplate({
+        title: "New Driver Registration",
+        content: adminContent,
+      }),
     });
 
-    // Confirmation to driver
+    /* ---------- DRIVER EMAIL (BOOKING STYLE) ---------- */
+
     if (email) {
-      await transporter.sendMail({
-        from: `"CabEazy Travel" <${process.env.EMAIL_USER}>`,
+      const driverContent = `
+        <p>Your driver registration has been successfully submitted.</p>
+
+        <!-- Driver Details -->
+        <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
+          <p><strong>Name:</strong> ${fullName}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>City:</strong> ${city}</p>
+          <p><strong>Vehicle:</strong> ${vehicle}</p>
+        </div>
+
+        <!-- Status -->
+        <div style="margin-top:20px;padding:16px;border-radius:10px;background:#fff4f0;border-left:4px solid #ea5b2a;">
+          🚗 <strong>Status:</strong> Your application is under review.
+        </div>
+
+        <p style="margin-top:16px;">
+          Our team will verify your details and contact you once approved.
+        </p>
+
+        <p style="margin-top:10px;">
+          Ride opportunities will be shared based on availability in your area.
+        </p>
+
+        <p style="margin-top:16px;font-size:13px;color:#666;">
+          Thank you for joining CabEazy.
+        </p>
+      `;
+
+      await sendEmail({
         to: email,
         subject: "Driver Registration Received",
-        html: `
-        <h2>Hello ${fullName},</h2>
-
-        <p>
-        Thank you for registering as a driver with <strong>CabEazy</strong>.
-        </p>
-
-        <p>
-        Our team has received your details and will review your application.
-        </p>
-
-        <p>
-        Once there is a suitable booking available in your area,
-        our agency will contact you.
-        </p>
-
-        <br/>
-
-        <p>
-        Regards,<br/>
-        CabEazy Team
-        </p>
-        `,
+        html: emailTemplate({
+          title: `Hello ${fullName},`,
+          content: driverContent,
+        }),
       });
     }
 
