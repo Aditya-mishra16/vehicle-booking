@@ -33,10 +33,17 @@ const DriverSchema = new mongoose.Schema(
       index: true,
     },
 
-    vehicle: {
+    vehicleName: {
       type: String,
       required: true,
       trim: true,
+    },
+
+    vehicleType: {
+      type: String,
+      enum: ["sedan-intercity", "mini-intercity", "suv-intercity"],
+      required: true,
+      index: true,
     },
 
     status: {
@@ -47,8 +54,8 @@ const DriverSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // creates createdAt + updatedAt automatically
-    versionKey: false, // removes __v from documents
+    timestamps: true,
+    versionKey: false,
   },
 );
 

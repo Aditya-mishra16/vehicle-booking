@@ -25,9 +25,9 @@ export async function POST(req) {
 
     const body = await req.json();
 
-    const { fullName, phone, email, city, vehicle } = body;
+    const { fullName, phone, email, city, vehicleName, vehicleType } = body;
 
-    if (!fullName || !phone || !city || !vehicle) {
+    if (!fullName || !phone || !city || !vehicleName || !vehicleType) {
       return Response.json(
         { success: false, error: "Missing required fields" },
         { status: 400 },
@@ -39,7 +39,8 @@ export async function POST(req) {
       phone,
       email,
       city,
-      vehicle,
+      vehicleName,
+      vehicleType,
     });
 
     return Response.json({

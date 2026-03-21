@@ -1,3 +1,5 @@
+"use server";
+
 import { connectDB } from "@/lib/mongodb";
 import Booking from "@/models/Booking";
 import { formatTime } from "@/utils/formatTime";
@@ -11,11 +13,8 @@ export async function PATCH(req, context) {
     const { id } = await context.params;
     const body = await req.json();
 
-    const booking = await Booking.findByIdAndUpdate(
-      id,
-      { driver: body.driverId },
-      { returnDocument: "after" },
-    ).populate("driver");
+    // ✅ FETCH BOOKING
+    const booking = await Booking.findById(id);
 
     if (!booking) {
       return Response.json({
@@ -23,6 +22,14 @@ export async function PATCH(req, context) {
         error: "Booking not found",
       });
     }
+
+    // ✅ ALLOW REASSIGN (NO RESTRICTION)
+    booking.driver = body.driverId;
+    booking.driverAssigned = true;
+    booking.status = "assigned"; // ✅ optional but recommended
+
+    await booking.save();
+    await booking.populate("driver");
 
     const driver = booking.driver;
 
@@ -56,13 +63,12 @@ export async function PATCH(req, context) {
     if (driver?.email) {
       await sendEmail({
         to: driver.email,
-        subject: "🚗 New Ride Assigned",
+        subject: "🚗 Ride Assignment Update",
         html: emailTemplate({
           title: `Hello ${driver.fullName},`,
           content: `
-            <p>A new ride has been assigned to you.</p>
+            <p>A ride has been assigned to you.</p>
 
-            <!-- Booking Summary -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
               <p><strong>Booking ID:</strong> ${booking.bookingId}</p>
               <p><strong>Trip Type:</strong> ${tripTypeLabel}</p>
@@ -70,12 +76,10 @@ export async function PATCH(req, context) {
               <p><strong>Estimated Fare:</strong> ₹${booking.price}</p>
             </div>
 
-            <!-- Trip Details -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
               <h3>Trip Details</h3>
 
               <p><strong>${booking.pickup} → ${booking.drop}</strong></p>
-
               <p><strong>Pickup:</strong> ${pickupDate} | ${pickupTime}</p>
 
               ${
@@ -85,18 +89,17 @@ export async function PATCH(req, context) {
               }
             </div>
 
-            <!-- Customer -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
-    <h3>Customer Details</h3>
+              <h3>Customer Details</h3>
 
-    <p><strong>${booking.name}</strong></p>
-    <p>${booking.phone}</p>
+              <p><strong>${booking.name}</strong></p>
+              <p>${booking.phone}</p>
 
-    <a href="tel:${booking.phone}"
-      style="display:inline-block;background:#ea5b2a;color:#fff;padding:10px 18px;border-radius:6px;margin-top:10px;text-decoration:none;">
-      📞 Call Customer
-    </a>
-  </div>
+              <a href="tel:${booking.phone}"
+                style="display:inline-block;background:#ea5b2a;color:#fff;padding:10px 18px;border-radius:6px;margin-top:10px;text-decoration:none;">
+                📞 Call Customer
+              </a>
+            </div>
           `,
         }),
       });
@@ -107,13 +110,12 @@ export async function PATCH(req, context) {
     if (booking.email) {
       await sendEmail({
         to: booking.email,
-        subject: "🚗 Your Driver Has Been Assigned",
+        subject: "🚗 Driver Assignment Updated",
         html: emailTemplate({
           title: `Hello ${booking.name},`,
           content: `
-            <p>Your driver has been assigned for your upcoming trip.</p>
+            <p>Your driver has been assigned/updated for your trip.</p>
 
-            <!-- Booking Summary -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
               <p><strong>Booking ID:</strong> ${booking.bookingId}</p>
               <p><strong>Trip Type:</strong> ${tripTypeLabel}</p>
@@ -121,7 +123,6 @@ export async function PATCH(req, context) {
               <p><strong>Estimated Fare:</strong> ₹${booking.price}</p>
             </div>
 
-            <!-- Driver Details -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
               <h3>Driver Details</h3>
 
@@ -134,12 +135,10 @@ export async function PATCH(req, context) {
               </a>
             </div>
 
-            <!-- Trip Details -->
             <div style="background:#f6f7f9;padding:16px;border-radius:10px;margin-top:15px">
               <h3>Trip Details</h3>
 
               <p><strong>${booking.pickup} → ${booking.drop}</strong></p>
-
               <p><strong>Pickup:</strong> ${pickupDate} | ${pickupTime}</p>
 
               ${

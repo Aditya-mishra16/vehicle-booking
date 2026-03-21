@@ -39,8 +39,6 @@ const BookingSchema = new mongoose.Schema(
       trim: true,
     },
 
-    /* ---------- PICKUP ---------- */
-
     startDate: {
       type: Date,
       required: true,
@@ -50,8 +48,6 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-
-    /* ---------- RETURN (ROUND TRIP) ---------- */
 
     endDate: {
       type: Date,
@@ -69,8 +65,6 @@ const BookingSchema = new mongoose.Schema(
       default: "oneway",
     },
 
-    /* ---------- VEHICLE ---------- */
-
     vehicle: {
       type: String,
       required: true,
@@ -81,12 +75,21 @@ const BookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    /* ---------- DRIVER ---------- */
-
     driver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Driver",
       default: null,
+    },
+
+    status: {
+      type: String,
+      enum: ["pending", "confirmed", "assigned", "completed", "cancelled"],
+      default: "pending",
+    },
+
+    driverAssigned: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -95,14 +98,5 @@ const BookingSchema = new mongoose.Schema(
   },
 );
 
-/* ---------- FIX FOR NEXTJS MODEL CACHING ---------- */
-
-let Booking;
-
-if (mongoose.models.Booking) {
-  Booking = mongoose.models.Booking;
-} else {
-  Booking = mongoose.model("Booking", BookingSchema);
-}
-
-export default Booking;
+export default mongoose.models.Booking ||
+  mongoose.model("Booking", BookingSchema);

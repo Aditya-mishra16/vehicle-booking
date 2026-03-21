@@ -51,22 +51,16 @@ export default function HeroSection() {
 
   const handleSeePrices = () => {
     if (!pickup.value || !drop.value) {
-      toast.error("Please select pickup and drop locations");
-      return;
+      toast.warning("Pickup or drop location missing");
     }
 
     if (!startDate || !startTime) {
-      toast.error("Please select pickup date and time");
-      return;
+      toast.warning("Pickup date/time missing");
     }
 
-    if (tripType === "roundtrip") {
-      if (!endDate || !endTime) {
-        toast.error("Please select return date and time");
-        return;
-      }
+    if (tripType === "roundtrip" && (!endDate || !endTime)) {
+      toast.warning("Return details missing");
     }
-
     setTrip({
       pickup: pickup.value,
       drop: drop.value,
