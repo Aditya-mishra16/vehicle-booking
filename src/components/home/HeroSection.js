@@ -17,6 +17,7 @@ import axios from "axios";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 /* ───────── SMOOTH EASING ───────── */
 const ease = [0.22, 1, 0.36, 1];
@@ -100,14 +101,16 @@ export default function HeroSection() {
 
   return (
     <>
-      <section
-        className="relative h-[680px] sm:h-[780px] md:h-[650px] flex items-start md:items-end pt-32 md:pt-0"
-        style={{
-          backgroundImage: "url('/images/HeroSectionBgImage.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      <section className="relative h-[680px] sm:h-[780px] md:h-[650px] flex items-start md:items-end pt-32 md:pt-0">
+        <Image
+          src="/images/HeroSectionBgImage.jpg"
+          alt="Hero Background"
+          fill
+          priority
+          quality={85}
+          className="object-cover"
+        />
+
         <div className="absolute inset-0 bg-black/20" />
 
         {/* HERO TITLE */}

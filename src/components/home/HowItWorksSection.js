@@ -118,8 +118,8 @@ export default function HowItWorksSection() {
               >
                 {/* Icon */}
                 <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
                   transition={{ duration: 0.4, ease }}
                   className={`
                     relative z-10 w-24 h-24 md:w-28 md:h-28

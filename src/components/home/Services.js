@@ -38,7 +38,7 @@ export default function ServicesSection() {
       desc: "Well-maintained vehicles for smooth and comfortable rides.",
     },
     {
-      icon: "/icons/TechnicalSupport.svg",
+      icon: "/icons/technicalSupport.svg",
       title: "24/7 Technical Support",
       desc: "Have a question? Our team is available anytime to assist you.",
     },

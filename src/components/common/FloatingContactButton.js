@@ -25,13 +25,13 @@ export default function FloatingContactButton() {
   if (!mounted) return null;
 
   return (
-    <div className="floating-contact fixed right-6 bottom-6 z-50 flex flex-col items-end gap-4">
+    <div className="floating-contact fixed right-6 bottom-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
       {/* Open State Buttons */}
       <div
         className={`flex flex-col items-end gap-3 transition-all duration-300 ease-out ${
           open
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-4 scale-95 pointer-events-none"
+            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto visible z-50"
+            : "opacity-0 translate-y-4 scale-95 pointer-events-none invisible z-[-1]"
         }`}
       >
         {/* Call Expert */}
@@ -62,11 +62,12 @@ export default function FloatingContactButton() {
           </span>
         </a>
       </div>
+
       {/* Main Floating Button */}
       <button
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Talk to travel expert"
-        className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
+        className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 pointer-events-auto ${
           open
             ? "bg-neutral-900 text-white rotate-90"
             : "bg-brandColor text-white hover:scale-110"
