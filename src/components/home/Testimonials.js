@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+
+/* ───────── SMOOTH EASING ───────── */
+const ease = [0.22, 1, 0.36, 1];
 
 export default function TestimonialsSection() {
   const scrollRef = useRef(null);
@@ -40,19 +41,25 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="py-24 relative">
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Heading (LEFT ALIGNED like image) */}
-        <div className="mb-16">
+        {/* ───────── HEADING (SCROLL ANIMATION) ───────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease }}
+          viewport={{ once: true, margin: "-80px" }}
+          className="mb-16"
+        >
           <h2 className="text-4xl md:text-5xl font-semibold mb-4">
             What Our <span className="text-brandColor">Customers</span> Say
           </h2>
           <p className="text-gray-500 text-lg">
             Hear from people who made the smarter choice for intercity travel.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Arrows */}
+        {/* ───────── ARROWS (UNCHANGED) ───────── */}
         <button
           onClick={() => scroll("left")}
           className="absolute left-6 top-[60%] hidden md:flex"
@@ -67,62 +74,70 @@ export default function TestimonialsSection() {
           <ChevronRight className="w-6 h-6 text-gray-400 hover:text-black transition" />
         </button>
 
-        {/* Scroll Container */}
-        <div
-          ref={scrollRef}
-          className="
-    flex gap-6 md:gap-12
-    overflow-x-auto
-    scroll-smooth
-    snap-x snap-mandatory
-    pb-4
-    md:no-scrollbar
-  "
+        {/* ───────── CONTAINER (SCROLL ANIMATION) ───────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease, delay: 0.1 }}
+          viewport={{ once: true, margin: "-60px" }}
         >
-          {testimonials.map((t, index) => (
-            <div
-              key={index}
-              className="
-        min-w-[85%] md:min-w-[540px]
-        max-w-[85%] md:max-w-[540px]
-        snap-start
-        bg-gray-50
-        rounded-3xl
-        p-8 md:p-12
-        relative
-        shadow-sm
-      "
-            >
-              {/* Quote Text */}
-              <p className="text-base md:text-lg leading-relaxed mb-8 md:mb-10 text-gray-800">
-                “{t.text}”
-              </p>
+          <div
+            ref={scrollRef}
+            className="
+              flex gap-6 md:gap-12
+              overflow-x-auto
+              scroll-smooth
+              snap-x snap-mandatory
+              pb-4
+              md:no-scrollbar
+            "
+          >
+            {testimonials.map((t, index) => (
+              <div
+                key={index}
+                className="
+                  min-w-[85%] md:min-w-[540px]
+                  max-w-[85%] md:max-w-[540px]
+                  snap-start
+                  bg-gray-50
+                  rounded-3xl
+                  p-8 md:p-12
+                  relative
+                  shadow-sm
+                  transition-transform duration-200 hover:-translate-y-1
+                "
+              >
+                {/* TEXT */}
+                <p className="text-base md:text-lg leading-relaxed mb-8 md:mb-10 text-gray-800">
+                  “{t.text}”
+                </p>
 
-              {/* User Info */}
-              <div className="flex items-center gap-4">
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover"
-                />
+                {/* USER */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover"
+                  />
 
-                <div>
-                  <h4 className="font-semibold text-sm md:text-base">
-                    {t.name}
-                  </h4>
-                  <p className="text-gray-500 text-xs md:text-sm">
-                    {t.location}
-                  </p>
+                  <div>
+                    <h4 className="font-semibold text-sm md:text-base">
+                      {t.name}
+                    </h4>
+                    <p className="text-gray-500 text-xs md:text-sm">
+                      {t.location}
+                    </p>
+                  </div>
+                </div>
+
+                {/* QUOTE */}
+                <div className="absolute bottom-4 right-6 md:bottom-6 md:right-8 text-5xl md:text-6xl text-brandColor opacity-90">
+                  ”
                 </div>
               </div>
-
-              {/* Big Quote Mark */}
-              <div className="absolute bottom-4 right-6 md:bottom-6 md:right-8 text-5xl md:text-6xl text-brandColor opacity-90">
-                ”
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   );

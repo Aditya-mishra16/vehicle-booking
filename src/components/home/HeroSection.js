@@ -16,6 +16,10 @@ import useLocationField from "@/hooks/useLocationField";
 import axios from "axios";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+
+/* ───────── SMOOTH EASING ───────── */
+const ease = [0.22, 1, 0.36, 1];
 
 export default function HeroSection() {
   const router = useRouter();
@@ -108,7 +112,12 @@ export default function HeroSection() {
 
         {/* HERO TITLE */}
         <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center pointer-events-none">
-          <div className="text-center text-white max-w-5xl px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease }}
+            className="text-center text-white max-w-5xl px-6"
+          >
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Fixed fares, reliable rides, and
               <br />a smoother way to travel between cities.
@@ -119,7 +128,7 @@ export default function HeroSection() {
               <div>✓ Verified Drivers</div>
               <div>✓ Direct Human Support</div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* SEARCH CARD */}

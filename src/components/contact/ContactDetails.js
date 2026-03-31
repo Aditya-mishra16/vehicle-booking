@@ -2,9 +2,27 @@
 
 import { Phone, Mail, MessageCircle, ArrowUpRight } from "lucide-react";
 import ContactForm from "@/components/contact/ContactForm";
+import { motion } from "framer-motion";
 
 const PHONE_NUMBER = process.env.NEXT_PUBLIC_PHONE_NUMBER;
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+/* ───────── ANIMATION VARIANTS ───────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
 
 const contactCards = [
   {
@@ -29,7 +47,9 @@ const contactCards = [
     value: WHATSAPP_NUMBER || "+91 3829247289",
     sub: "Fastest response",
     href: WHATSAPP_NUMBER
-      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi, I want to enquire about an outstation trip.")}`
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+          "Hi, I want to enquire about an outstation trip.",
+        )}`
       : "#",
     cta: "Chat now",
   },
@@ -37,26 +57,43 @@ const contactCards = [
 
 export default function ContactDetails() {
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6">
+    <section className="py-16 md:py-24 px-4 md:px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-12 md:mb-16">
+        {/* ───────── HEADING ───────── */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="text-center mb-12 md:mb-16"
+        >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold">
             Let's Get <span className="text-brandColor">Talking</span>
           </h2>
+
           <p className="text-gray-500 mt-4 max-w-2xl mx-auto text-sm sm:text-base">
             If you have any questions or you'd like to find out more about what
             we do, please get in touch.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Contact Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-14 md:mb-20">
-          {contactCards.map((card) => {
+        {/* ───────── CONTACT CARDS ───────── */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-14 md:mb-20"
+        >
+          {contactCards.map((card, i) => {
             const Icon = card.icon;
+
             return (
-              <a
+              <motion.a
                 key={card.label}
+                variants={fadeUp}
+                whileHover={{ y: -6, scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
                 href={card.href}
                 target={card.href.startsWith("http") ? "_blank" : undefined}
                 rel={
@@ -68,24 +105,28 @@ export default function ContactDetails() {
                   group flex flex-col items-center gap-3 text-center
                   bg-white border border-gray-100 rounded-2xl
                   p-6 shadow-sm
-                  hover:shadow-md hover:border-brandColor/20
+                  hover:shadow-xl hover:border-brandColor/20
                   transition-all duration-200
                 "
               >
-                <div
+                {/* Icon */}
+                <motion.div
+                  whileHover={{ rotate: 6, scale: 1.08 }}
                   className="
-                  w-12 h-12 rounded-xl
-                  bg-brandColor/5 border border-brandColor/10
-                  flex items-center justify-center
-                  group-hover:bg-brandColor group-hover:border-brandColor
-                  transition-all duration-200
-                "
+                    w-12 h-12 rounded-xl
+                    bg-brandColor/5 border border-brandColor/10
+                    flex items-center justify-center
+                    group-hover:bg-brandColor group-hover:border-brandColor
+                    transition-all duration-200
+                  "
                 >
                   <Icon
                     size={20}
                     className="text-brandColor group-hover:text-white transition-colors duration-200"
                   />
-                </div>
+                </motion.div>
+
+                {/* Text */}
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">{card.label}</p>
                   <p className="font-medium text-gray-900 text-sm">
@@ -93,45 +134,61 @@ export default function ContactDetails() {
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">{card.sub}</p>
                 </div>
-                <span
+
+                {/* CTA */}
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  whileHover={{ opacity: 1, y: 0 }}
                   className="
-                  inline-flex items-center gap-1
-                  text-xs font-medium text-brandColor
-                  opacity-0 group-hover:opacity-100
-                  -translate-y-1 group-hover:translate-y-0
-                  transition-all duration-200
-                "
+                    inline-flex items-center gap-1
+                    text-xs font-medium text-brandColor
+                    opacity-0 group-hover:opacity-100
+                    transition-all duration-200
+                  "
                 >
                   {card.cta}
                   <ArrowUpRight size={12} />
-                </span>
-              </a>
+                </motion.span>
+              </motion.a>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* Form Section */}
-        <div className="bg-gray-50 rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2">
-          {/* Left Image */}
-          <div className="hidden md:block">
-            <img
+        {/* ───────── FORM SECTION ───────── */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="bg-gray-50 rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2"
+        >
+          {/* Image */}
+          <div className="hidden md:block overflow-hidden">
+            <motion.img
               src="/images/contactImage.png"
               alt="Contact"
               className="w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.5 }}
             />
           </div>
 
-          {/* Right Form */}
+          {/* Form */}
           <div className="p-6 sm:p-8 md:p-12">
-            <h3 className="text-xl font-semibold text-gray-900 mb-1">
+            <motion.h3
+              variants={fadeUp}
+              className="text-xl font-semibold text-gray-900 mb-1"
+            >
               Send us a message
-            </h3>
-            <p className="text-sm text-gray-500 mb-8">
+            </motion.h3>
+
+            <motion.p variants={fadeUp} className="text-sm text-gray-500 mb-8">
               Fill in the form and we'll get back to you shortly.
-            </p>
+            </motion.p>
+
             <ContactForm />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
