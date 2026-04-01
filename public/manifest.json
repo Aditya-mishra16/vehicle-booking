@@ -1,0 +1,20 @@
+{
+  "name": "Cab Admin Dashboard",
+  "short_name": "CabAdmin",
+  "start_url": "/admin",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/images/JobsBanner.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/Mini.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
